@@ -58,9 +58,9 @@ class Sound_Manager:
         return_dict_playback['start_playback'] =  time.time()
         time.sleep(5)
         for frequency in frequenties:
-            return_dict_playback[f'start_frequenty_{str(frequency)}'] = time.time()
+            return_dict_playback[f'start_frequency_{str(frequency)}'] = time.time()
             winsound.Beep(frequency, 1000)
-            return_dict_playback[f'stop_frequenty_{str(frequency)}'] = time.time()
+            return_dict_playback[f'stop_frequency_{str(frequency)}'] = time.time()
             time.sleep(4)
         return_dict_playback['end_playback'] = time.time()
 
