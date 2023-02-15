@@ -4,18 +4,26 @@ from Sound_Manager import Sound_Manager
 class Data_Processor:
     @classmethod
     def data_Analysis(self):
-        recording, timestamps = Sound_Manager.run_Test_Experiment()
-        if not (recording == [] or timestamps == []):
+        all_data_from_expirement = Sound_Manager.run_Experiment()
+        time_data = all_data_from_expirement['time_data']
+        recording = all_data_from_expirement['recording']
+        time_stamps = all_data_from_expirement['timestamps']
+        if not (recording == [] or time_data == []) or not (len(recording) == len(time_data)):
             fig, axs = plt.subplots(2)
-            axs[0].plot(timestamps, recording)
+            axs[0].plot(time_data, recording)
             recording = list(map(abs, recording))
+            
             avaraging_window_in_number_of_samples = 441
             smoothed_recording = self.smooth_Sound(recording, avaraging_window_in_number_of_samples)
-            axs[1].plot(timestamps, smoothed_recording)
+            axs[1].plot(time_data, smoothed_recording)
+            for time_stamp in time_stamps:
+                label = time_stamp['time_name']
+                time = time_stamp['time']
+                axs[1].vlines(time, 0, 1, label=label, linestyles='dotted', colors='g')
+            
             plt.show()
-            print('done')
         else:
-            print('no data')
+            print('no or corrupt data to process please check for any problems in your input data!')
     
     @classmethod
     def smooth_Sound(self, recording, avaraging_window_in_number_of_samples):
