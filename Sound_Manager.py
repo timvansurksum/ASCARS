@@ -69,15 +69,15 @@ class Sound_Manager:
         print('running experiment...')
         audio_device_name  = self.set_Audio_Devices()
         get_Min = lambda sound_sample: float(sound_sample[0])
-        time_data = np.linspace(0,40,40*44100)
+        time_data = np.linspace(0,35,35*44100)
         
         manager = multiprocessing.Manager()
         return_dict_recorder = manager.dict()
-        record_sound_async = Process(target=self.record, args=(40, return_dict_recorder, audio_device_name['record_device_name']))
+        record_sound_async = Process(target=self.record, args=(35, return_dict_recorder, audio_device_name['record_device_name']))
         record_sound_async.start()
         
         return_dict_playback = manager.dict()
-        play_sound_async = Process(target=self.play_Sounds, args=([200,400,600,800,1000,1200,1400], return_dict_playback, audio_device_name['play_device_name']))
+        play_sound_async = Process(target=self.play_Sounds, args=([400,600,800,1000,1200,1400], return_dict_playback, audio_device_name['play_device_name']))
         play_sound_async.start()
         play_sound_async.join()
         record_sound_async.join()

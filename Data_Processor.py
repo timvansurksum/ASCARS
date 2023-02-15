@@ -22,10 +22,10 @@ class Data_Processor:
                 time = time_stamp['time']
                 axs[1].vlines(time, 0, 1, label=label, linestyles='dotted', colors='g')
                 if label_height:
-                    axs[1].text(time, 1, label)
+                    axs[1].text(time, 1, label, backgroundcolor='dimgray', color='white')
                     label_height = 0
                 else:
-                    axs[1].text(time, 0.9, label)
+                    axs[1].text(time, 0.9, label, backgroundcolor='grey', color='white')
                     label_height = 1
 
             
