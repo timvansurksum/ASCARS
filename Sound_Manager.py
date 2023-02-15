@@ -20,14 +20,14 @@ class Sound_Manager:
     def record(self, duration, return_dict):
         if 'Microphone (USB Audio Device )' in list(sd.query_devices()):
             sd.default.device = 'Microphone (USB Audio Device )'
+            fs = 44100
+            recording = sd.rec(duration * fs, samplerate=fs, channels=1, dtype='float64')
+            print (f"Recording Audio for {duration} seconds at {self.get_Time_Now()}")
+            sd.wait()
+            print (f"Audio recording complete at {self.get_Time_Now()}")
+            return_dict['recording'] = recording
         else:
             print('microphone not connected')
-        fs = 44100
-        recording = sd.rec(duration * fs, samplerate=fs, channels=1, dtype='float64')
-        print (f"Recording Audio for {duration} seconds at {self.get_Time_Now()}")
-        sd.wait()
-        print (f"Audio recording complete at {self.get_Time_Now()}")
-        return_dict['recording'] = recording
 
     @classmethod
     def play_Sounds(self, frequenties):
