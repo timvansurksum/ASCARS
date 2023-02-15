@@ -6,6 +6,7 @@ from multiprocessing import Process
 import multiprocessing
 import numpy as np
 import matplotlib.pyplot as plt
+import json
 
 
 class Sound_Manager:
@@ -27,6 +28,8 @@ class Sound_Manager:
             print (f"Audio recording complete at {self.get_Time_Now()}")
             return_dict['recording'] = recording
         else:
+            available_devices = json.dumps(list(sd.query_devices()), indent='    ')
+            print(f'available devices: \n {available_devices}')
             print('microphone not connected')
 
     @classmethod
