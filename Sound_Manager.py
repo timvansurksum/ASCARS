@@ -5,7 +5,6 @@ from datetime import datetime
 from multiprocessing import Process
 import multiprocessing
 import numpy as np
-import matplotlib.pyplot as plt
 import json
 
 
@@ -73,11 +72,3 @@ class Sound_Manager:
             return recording, timestamps
         else:
             return [], []
-    
-
-    @classmethod
-    def data_Analysis(self):
-        recording, timestamps = self.run_Test_Experiment()
-        if not (recording == [] or timestamps == []):
-            plt.plot(timestamps, recording)
-            plt.show()
