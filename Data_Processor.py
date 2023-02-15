@@ -16,10 +16,18 @@ class Data_Processor:
             avaraging_window_in_number_of_samples = 441
             smoothed_recording = self.smooth_Sound(recording, avaraging_window_in_number_of_samples)
             axs[1].plot(time_data, smoothed_recording)
+            label_height = 1
             for time_stamp in time_stamps:
                 label = time_stamp['time_name']
                 time = time_stamp['time']
                 axs[1].vlines(time, 0, 1, label=label, linestyles='dotted', colors='g')
+                if label_height:
+                    axs[1].text(time, 1, label)
+                    label_height = 0
+                else:
+                    axs[1].text(time, 0.9, label)
+                    label_height = 1
+
             
             plt.show()
         else:
