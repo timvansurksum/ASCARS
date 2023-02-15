@@ -19,7 +19,10 @@ class Sound_Manager:
 
     @classmethod
     def check_Audio_Device(self, device_name):
-        if device_name in list(sd.query_devices()):
+        audio_device_names  = []
+        for audio_device in list(sd.query_devices()):
+            audio_device_names.append(audio_device['name'])
+        if device_name in audio_device_names:
             return True
         else:
             
@@ -34,7 +37,7 @@ class Sound_Manager:
 
     @classmethod
     def record(self, duration, return_dict):
-            sd.default.device = 'Microphone (USB Audio Device )'
+            sd.default.device = "Microphone (USB Audio Device)"
             fs = 44100
             recording = sd.rec(duration * fs, samplerate=fs, channels=1, dtype='float64')
             print (f"Recording Audio for {duration} seconds at {self.get_Time_Now()}")
@@ -55,7 +58,7 @@ class Sound_Manager:
 
     @classmethod
     def run_Test_Experiment(self):
-        if self.check_Audio_Device('Microphone (USB Audio Device )'):
+        if self.check_Audio_Device("Microphone (USB Audio Device)"):
             manager = multiprocessing.Manager()
             return_dict = manager.dict()
             record_sound_async = Process(target=self.record, args=(40,return_dict))
