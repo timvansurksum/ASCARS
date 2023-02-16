@@ -8,7 +8,7 @@ import time
 
 
 class Sound_Manager:
-    #example change
+
     @classmethod
     def set_Audio_Devices(self):
         record_device_names  = []
@@ -58,7 +58,6 @@ class Sound_Manager:
         time.sleep(5)
         for frequency in frequenties:
             return_dict_playback[f'start_frequency_{str(frequency)}'] = time.time()
-            sd.
             winsound.Beep(frequency, 1000)
             return_dict_playback[f'stop_frequency_{str(frequency)}'] = time.time()
             time.sleep(4)
