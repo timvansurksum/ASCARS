@@ -5,9 +5,11 @@ import multiprocessing
 import numpy as np
 import os
 import time
+from pysinewave import SineWave
 
 
 class Sound_Manager:
+
 
     @classmethod
     def set_Audio_Devices(self):
@@ -53,20 +55,26 @@ class Sound_Manager:
 
     @classmethod
     def play_Sounds(self, frequenties, return_dict_playback, audio_device_name):
+        
         sd.default.device = audio_device_name
         return_dict_playback['start_playback'] =  time.time()
         time.sleep(5)
+        sinewave = SineWave()
+        
         for frequency in frequenties:
             return_dict_playback[f'start_frequency_{str(frequency)}'] = time.time()
-            winsound.Beep(frequency, 1000)
+            sinewave.set_frequency(frequency=frequency)
+            sinewave.play()
+            time.sleep(2)
+            sinewave.stop()
             return_dict_playback[f'stop_frequency_{str(frequency)}'] = time.time()
-            time.sleep(4)
+            time.sleep(3)
         return_dict_playback['end_playback'] = time.time()
 
     @classmethod
     def run_Experiment(self):
-        print('running experiment...')
         audio_device_name  = self.set_Audio_Devices()
+        print('running experiment...')
         get_Min = lambda sound_sample: float(sound_sample[0])
         time_data = np.linspace(0,35,35*44100)
         
