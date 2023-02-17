@@ -87,6 +87,9 @@ class Data_Processor:
         else:
             print('none existent or corrupt data to process please check for any problems in your input data!')
     
+    @classmethod
+    def get_Reverberation_Time(stop_playing_frequency_time, starting_intensity, data):
+        print('write function here')
     
     @classmethod
     def get_Starting_intensity(self, smoothed_recording, start_frequency_time, stop_frequency_time):
