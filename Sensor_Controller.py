@@ -66,13 +66,11 @@ class Sensor_Controller:
             record_device_name = input(f'you entered an invalid device name these are the possible device names:\n  {record_device_names_string}\n enter the name of the device here: ')
 
 
-        os.system('cls')
         play_device_names_string = '\n  '.join(play_device_names)
         play_device_name = input(f'please type the playback device you want to use your available devices are:\n    {play_device_names_string}\n enter the name of the device here: ')
 
         while not play_device_name in play_device_names_string:
             play_device_name = input(f'you entered an invalid device name these are the possible device names:\n    {play_device_names_string}\n enter the name of the device here: ')
-        os.system('cls')
         
         return  {
                 'record_device_name': record_device_name,
