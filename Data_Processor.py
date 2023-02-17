@@ -1,11 +1,46 @@
 import matplotlib.pyplot as plt
-from Sound_Manager import Sound_Manager
+from Sensor_Controller import Sensor_Controller
+import pandas as pd
 
 class Data_Processor:
-    # test
+    
+    @classmethod
+    def calibrate_Sensor(self, audio_device_name, playtime, frequency):
+        existing_calibration_data = pd.read_csv('./data/calibration/calibration_data.csv')
+
+        
+        done = 0
+        print(f'starting the calibration of the frequency {str(frequency)}')
+        while not done:
+            print(f'starting playing sound with frequency {str(frequency)}')
+            calibration_data = Sensor_Controller.play_Calibration_Sound(audio_device_name, frequency)
+            
+            recording = list(map(abs, calibration_data['recording']))
+            smooth_recording = self.smooth_Sound(recording, 441)
+            intensity = self.get_Starting_intensity(smooth_recording, 441)
+            DB_level = calibration_data
+            # DB_level,frequency,microphone_intensity
+            calibration_data_point = pd.DataFrame({
+                'DB_level': DB_level,
+                'frequency': frequency,
+                'microphone_intensity': intensity
+            })
+            existing_calibration_data.append(calibration_data_point)
+
+            new_DB_test = input("do you want to test another DB level? 'yes' or 'no'?")
+            while new_DB_test in ['yes', 'no']:
+                if new_DB_test == 'yes':
+                    done = 0
+                elif new_DB_test == 'no':
+                    done = 1
+                else:
+                    new_DB_test = input("invalid input please enter a valid input either 'yes' or 'no'?")
+        
+        existing_calibration_data.to_csv('./data/calibration/calibration_data.csv', sep=',', encoding='utf-8', index=False)
+
     @classmethod
     def data_Analysis(self):
-        all_data_from_expirement = Sound_Manager.run_Experiment()
+        all_data_from_expirement = Sensor_Controller.run_Experiment()
         time_data = all_data_from_expirement['time_data']
         recording = all_data_from_expirement['recording']
         time_stamps = all_data_from_expirement['timestamps']
@@ -43,7 +78,7 @@ class Data_Processor:
                     axs[1].text(time, 50, label, backgroundcolor='grey', color='white')
                     label_height = 1
             for frequency_timing in frequency_timings.values():
-                starting_intesity = self.get_Starting_intensity(smoothed_recording, frequency_timing['start_time'], frequency_timing['stop_time'])
+                starting_intesity = self.get_Starting_intensity(smoothed_recording, frequency_timing['start_time']+0.5, frequency_timing['stop_time'])
                 axs[1].hlines(
                             starting_intesity, 
                             frequency_timing['start_time'] - 0.5, 
@@ -59,7 +94,7 @@ class Data_Processor:
     
     @classmethod
     def get_Starting_intensity(self, smoothed_recording, start_frequency_time, stop_frequency_time):
-        starting_intensity_value = int((start_frequency_time+0.5)*44100)-1
+        starting_intensity_value = int((start_frequency_time)*44100)-1
         last_intensity_value = int(stop_frequency_time*44100)
         values_to_get_avarage_over = smoothed_recording[starting_intensity_value:last_intensity_value]
         starting_intensity = sum(values_to_get_avarage_over)/len(values_to_get_avarage_over)

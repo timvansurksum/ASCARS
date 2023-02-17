@@ -8,8 +8,44 @@ import time
 from pysinewave import SineWave
 
 
-class Sound_Manager:
+class Sensor_Controller:
 
+
+    @classmethod
+    def play_Frequency(self, frequency, audio_device_name, play_time):
+        sd.default.device = audio_device_name
+        
+        sinewave = SineWave()
+        sinewave.set_frequency(frequency=frequency)
+        sinewave.play()
+        time.sleep(play_time)
+        sinewave.stop()
+
+    @classmethod
+    def play_Calibration_Sound(self, audio_device_name, frequency):
+        sd.default.device = audio_device_name
+        sinewave = SineWave()
+        sinewave.set_frequency(frequency=frequency)
+        fs = 44100
+        sinewave.play()
+
+        DB_level = input('please adjust the speaker level for a target db level and enter the db level here: ')
+        valid_input = False
+        while not valid_input:
+            try:
+                DB_level = float(DB_level)
+                valid_input = True
+            except:
+                DB_level = input('incorrect value has to be a number please re-enter the db level here: ')
+        recording = sd.rec(1,samplerate=fs, channels=1, dtype='float64')
+        print('recording tone to analyse intensity')
+        sd.wait()
+        sinewave.stop()
+        calibration_data = {
+            'recording': recording,
+            'DB_level': DB_level
+        }
+        return calibration_data
 
     @classmethod
     def set_Audio_Devices(self):
@@ -20,6 +56,7 @@ class Sound_Manager:
                 record_device_names.append(audio_device['name'])
             if int(audio_device["max_output_channels"]) > 0:
                 play_device_names.append(audio_device['name'])
+        
         
         os.system('cls')
         record_device_names_string = '\n    '.join(record_device_names)

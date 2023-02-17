@@ -1,10 +1,10 @@
 import sounddevice as sd
-from Sound_Manager import Sound_Manager
+from Sensor_Controller import Sensor_Controller
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-devices = Sound_Manager.set_Audio_Devices()
+devices = Sensor_Controller.set_Audio_Devices()
 sd.default.device = devices['record_device_name']
 recording =  sd.rec(4 * 44100, samplerate=44100, channels=1, dtype='float64')
 sd.wait()
