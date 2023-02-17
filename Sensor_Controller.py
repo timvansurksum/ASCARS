@@ -1,11 +1,8 @@
-import winsound
 import sounddevice as sd
-from multiprocessing import Process
-import multiprocessing
-import numpy as np
 import os
 import time
 from pysinewave import SineWave
+import multiprocessing
 
 
 class Sensor_Controller:
@@ -21,7 +18,7 @@ class Sensor_Controller:
         time.sleep(play_time)
         sinewave.stop()
 
-    @classmethod
+
     @classmethod
     def play_and_record_Calibration_Sound(self, audio_device_name, frequency):
         sd.default.device = audio_device_name['play_device_name']
@@ -40,7 +37,7 @@ class Sensor_Controller:
                 DB_level = input('incorrect value has to be a number please re-enter the db level here: ')
         
         sd.default.device = audio_device_name['record_device_name']
-        recording = sd.rec(1,samplerate=fs, channels=1, dtype='float64')
+        recording = sd.rec(1000,samplerate=fs, channels=1, dtype='float64')
         print('recording tone...')
         sd.wait()
         sinewave.stop()

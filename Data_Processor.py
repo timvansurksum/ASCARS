@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-from Sensor_Controller import Sensor_Controller
 import pandas as pd
 
 class Data_Processor:
