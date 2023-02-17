@@ -3,13 +3,44 @@ from Data_Processor import Data_Processor
 import multiprocessing
 from multiprocessing import Process
 import numpy as np
+import pandas as pd
 
 
 class Reverberation_Test:
     
     @classmethod
-    def run_Calibration():
-        print('run calibration here')
+    def run_Calibration(self, audio_device_name, frequency):
+        existing_calibration_data = pd.read_csv('./data/calibration/calibration_data.csv')
+
+        
+        done = 0
+        print(f'starting the calibration of the frequency {str(frequency)}')
+        while not done:
+            print(f'starting playing sound with frequency {str(frequency)}')
+            calibration_data = Sensor_Controller.play_Calibration_Sound(audio_device_name, frequency)
+            
+            recording = list(map(abs, calibration_data['recording']))
+            smooth_recording = Data_Processor.smooth_Sound(recording, 441)
+            intensity = Data_Processor.get_Starting_intensity(smooth_recording, 441)
+            DB_level = calibration_data
+            # DB_level,frequency,microphone_intensity
+            calibration_data_point = pd.DataFrame({
+                'DB_level': DB_level,
+                'frequency': frequency,
+                'microphone_intensity': intensity
+            })
+            existing_calibration_data.append(calibration_data_point)
+
+            new_DB_test = input("do you want to test another DB level? 'yes' or 'no'?")
+            while new_DB_test in ['yes', 'no']:
+                if new_DB_test == 'yes':
+                    done = 0
+                elif new_DB_test == 'no':
+                    done = 1
+                else:
+                    new_DB_test = input("invalid input please enter a valid input either 'yes' or 'no'?")
+        
+        existing_calibration_data.to_csv('./data/calibration/calibration_data.csv', sep=',', encoding='utf-8', index=False)
 
     @classmethod
     def run_Sensor(self):
