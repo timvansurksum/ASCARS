@@ -22,8 +22,9 @@ class Sensor_Controller:
         sinewave.stop()
 
     @classmethod
-    def play_Calibration_Sound(self, audio_device_name, frequency):
-        sd.default.device = audio_device_name
+    @classmethod
+    def play_and_record_Calibration_Sound(self, audio_device_name, frequency):
+        sd.default.device = audio_device_name['play_device_name']
         sinewave = SineWave()
         sinewave.set_frequency(frequency=frequency)
         fs = 44100
@@ -37,8 +38,10 @@ class Sensor_Controller:
                 valid_input = True
             except:
                 DB_level = input('incorrect value has to be a number please re-enter the db level here: ')
+        
+        sd.default.device = audio_device_name['record_device_name']
         recording = sd.rec(1,samplerate=fs, channels=1, dtype='float64')
-        print('recording tone to analyse intensity')
+        print('recording tone...')
         sd.wait()
         sinewave.stop()
         calibration_data = {

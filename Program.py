@@ -17,7 +17,7 @@ class Program:
         while not what_to_run in ['calibration', 'experiment']:
             what_to_run = input("please enter a valid option your options are: 'calibration' or 'experiment' ")
         if what_to_run == 'calibration':
-            Reverberation_Test.run_Calibration()
+            Reverberation_Test.run_Calibration(500)
         elif what_to_run == 'experiment':
             Reverberation_Test.run_Experiment()
 

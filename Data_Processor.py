@@ -5,6 +5,18 @@ import pandas as pd
 class Data_Processor:
 
     @classmethod
+    def process_Calibration_Data(self, calibration_data, frequency):
+            recording = list(map(abs, calibration_data['recording']))
+            smooth_recording = self.smooth_Sound(recording, 441)
+            intensity = self.get_Starting_intensity(smooth_recording, 0, 1)
+            DB_level = calibration_data['DB_level']
+            calibration_data_point = pd.DataFrame({
+                'DB_level': DB_level,
+                'frequency': frequency,
+                'microphone_intensity': intensity
+            })
+            return calibration_data_point
+    @classmethod
     def data_Analysis(self, expirement_data):
         time_data = expirement_data['time_data']
         recording = expirement_data['recording']
