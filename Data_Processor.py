@@ -224,6 +224,10 @@ class Data_Processor:
     
     @classmethod
     def smooth_Sound(self, recording, avaraging_window_in_number_of_samples):
+        recording = list(map(abs, recording))
+        amplify = lambda datapoint: datapoint*100
+        recording = list(map(amplify, recording))
+
         smoothed_recording = []
         sample_count = len(recording)
         index = 0
