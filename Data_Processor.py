@@ -59,43 +59,8 @@ class Data_Processor:
 
     @classmethod
     def get_lines(self, smoothed_recording, time_stamps, start_and_stop_time_stamps):
-        {
-            '400': {
-                'vertical_lines' : {
-                    'start_play_time' : {
-                        'x_value': 5,
-                        'y_upper_bound' : 100,
-                        'y_lower_bound' : 100
-                    },
-                    'stop_play_time' : {
-                        'x_value': 5,
-                        'y_upper_bound' : 100,
-                        'y_lower_bound' : 100
-                    },
-                    'reverberation_time' : {
-                        'x_value': 5.2,
-                        'y_upper_bound' : 100,
-                        'y_lower_bound' : 100
-                    }
-                },
-                'horizontal_lines' : {
-                    'starting_intensety' : {
-                        'y_value': 80,
-                        'x_upper_bound' : 100,
-                        'x_lower_bound' : 100
-                    },
-                    'reverberation_time' : {
-                        'y_value': 20,
-                        'y_upper_bound' : 5,
-                        'y_lower_bound' : 5.2
-                    }
-
-
-                }
-
-            }
-        }
         lines = {}
+
         for frequency in start_and_stop_time_stamps.keys():
             start_and_stop_time_stamp = start_and_stop_time_stamps[frequency]
             lines_by_frequency = {
@@ -151,10 +116,30 @@ class Data_Processor:
             }
 
             lines[str(frequency)] = lines_by_frequency
+        return lines
 
     @classmethod
-    def get_Reverberation_Time(self, stop_playing_frequency_time, starting_intensity, data):
-        print('write function here')
+    def get_Reverberation_Time(self, starting_intensity, stop_playing_frequency_time, data):
+        sampling_rate = 44100
+        start_point = stop_playing_frequency_time*sampling_rate
+        stop_point = start_point+2*sampling_rate
+        time_id = 0
+        for point in data[start_point:stop_point]:
+            if point < starting_intensity - 30:
+                break
+            else:
+                time_id += 1
+        reveberation_time = stop_playing_frequency_time + time_id/sampling_rate
+        return reveberation_time
+    
+    @classmethod
+    def get_Starting_intensity(self, smoothed_recording, start_frequency_time, stop_frequency_time):
+        sampling_rate = 44100
+        starting_intensity_value = int((start_frequency_time)*sampling_rate)-1
+        last_intensity_value = int(stop_frequency_time*sampling_rate)
+        values_to_get_avarage_over = smoothed_recording[starting_intensity_value:last_intensity_value]
+        starting_intensity = sum(values_to_get_avarage_over)/len(values_to_get_avarage_over)
+        return starting_intensity
 
     @classmethod
     def graph_Experiment_Data(self, time_data, smoothed_recording, time_stamps, start_and_stop_time_stamps, graph_lines):
@@ -230,16 +215,7 @@ class Data_Processor:
                         'stop_frequency_time': stop_frequency_time,
                     }
         return start_and_stop_time_stamps
-         
-    @classmethod
-    def get_Starting_intensity(self, smoothed_recording, start_frequency_time, stop_frequency_time):
-        sampling_rate = 44100
-        starting_intensity_value = int((start_frequency_time)*sampling_rate)-1
-        last_intensity_value = int(stop_frequency_time*sampling_rate)
-        values_to_get_avarage_over = smoothed_recording[starting_intensity_value:last_intensity_value]
-        starting_intensity = sum(values_to_get_avarage_over)/len(values_to_get_avarage_over)
-        return starting_intensity
-    
+
     
     @classmethod
     def smooth_Sound(self, recording, avaraging_window_in_number_of_samples):
