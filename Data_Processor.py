@@ -71,61 +71,66 @@ class Data_Processor:
             }
 
 
-            start_frequency_time = time_stamps[f'start_frequency_{frequency}']
-            stop_frequency_time  = time_stamps[f'stop_frequency_{frequency}']
-            intensity  = self.get_Starting_intensity(smoothed_recording, smoothed_recording, start_frequency_time, stop_frequency_time)
-            reverberation_time = self.get_Reverberation_Time
+            start_playing_frequency_time = int
+            stop_playing_frequency_time  = int
+            for timestamp in time_stamps:
+                if timestamp['time_name'] == f'start_frequency_{frequency}':
+                    start_playing_frequency_time = timestamp['time']
+                if timestamp['time_name'] == f'stop_frequency_{frequency}':
+                    stop_playing_frequency_time = timestamp['time']
+            starting_intensity  = self.get_Starting_intensity(smoothed_recording, start_playing_frequency_time, stop_playing_frequency_time)
+            reverberation_time = self.get_Reverberation_Time(smoothed_recording, starting_intensity, stop_playing_frequency_time)
             
             lines_by_frequency['vertical_lines']['reverberation_time'] = {
                 'x_value': reverberation_time,
-                'y_upper_bound' : intensity,
-                'y_lower_bound' : intensity-30,
-                'label_y': intensity-(30/2),
+                'y_upper_bound' : starting_intensity,
+                'y_lower_bound' : starting_intensity-10,
+                'label_y': starting_intensity-(10/2),
                 'label_x': reverberation_time
             }
 
             lines_by_frequency['vertical_lines']['start_playing'] = {
-                'x_value': start_frequency_time,
-                'y_upper_bound' : intensity*1.3,
+                'x_value': start_playing_frequency_time,
+                'y_upper_bound' : starting_intensity*1.3,
                 'y_lower_bound' : 0,
-                'label_y': intensity*1.2,
-                'label_x': start_frequency_time
+                'label_y': starting_intensity*1.2,
+                'label_x': start_playing_frequency_time
             }
 
             lines_by_frequency['vertical_lines']['stop_playing'] = {
-                'x_value': stop_frequency_time,
-                'y_upper_bound' : intensity*1.3,
+                'x_value': stop_playing_frequency_time,
+                'y_upper_bound' : starting_intensity*1.3,
                 'y_lower_bound' : 0,
-                'label_y': intensity*1.2,
-                'label_x': stop_frequency_time
+                'label_y': starting_intensity*1.2,
+                'label_x': stop_playing_frequency_time
             }
 
             lines_by_frequency['horizontal_lines']['starting_intensity']  = {
-                'y_value': intensity,
-                'label_y': intensity*1.2,
-                'label_y': stop_frequency_time,
-                'x_upper_bound' : stop_frequency_time + 2,
-                'x_lower_bound' : start_frequency_time - 2
+                'y_value': starting_intensity,
+                'label_y': starting_intensity*1.2,
+                'label_y': stop_playing_frequency_time,
+                'x_upper_bound' : stop_playing_frequency_time + 2,
+                'x_lower_bound' : start_playing_frequency_time - 2
             }
 
             lines_by_frequency['horizontal_lines']['reverberation_intensity']  = {
-                'y_value': intensity-30,
-                'label_height': (intensity-30)*1.2,
-                'x_upper_bound' : stop_frequency_time + 2,
-                'x_lower_bound' : start_frequency_time - 2
+                'y_value': starting_intensity-10,
+                'label_height': (starting_intensity-10)*1.2,
+                'x_upper_bound' : stop_playing_frequency_time + 2,
+                'x_lower_bound' : start_playing_frequency_time - 2
             }
 
             lines[str(frequency)] = lines_by_frequency
         return lines
 
     @classmethod
-    def get_Reverberation_Time(self, starting_intensity, stop_playing_frequency_time, data):
+    def get_Reverberation_Time(self, smooth_recording, starting_intensity, stop_playing_frequency_time):
         sampling_rate = 44100
-        start_point = stop_playing_frequency_time*sampling_rate
-        stop_point = start_point+2*sampling_rate
+        start_point = int(stop_playing_frequency_time*sampling_rate)
+        stop_point = int(start_point+2*sampling_rate)
         time_id = 0
-        for point in data[start_point:stop_point]:
-            if point < starting_intensity - 30:
+        for point in smooth_recording[start_point:stop_point]:
+            if point < starting_intensity - 10:
                 break
             else:
                 time_id += 1
