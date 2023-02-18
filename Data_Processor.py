@@ -39,10 +39,11 @@ class Data_Processor:
         existing_calibration_data.to_csv('./data/calibration/calibration_data.csv', sep=',', encoding='utf-8', index=False)
 
     @classmethod
-    def data_Analysis(self, expirement_data):
+    def data_Analysis(self, expirement_data, frequencies):
         time_data = expirement_data['time_data']
         recording = expirement_data['recording']
         time_stamps = expirement_data['timestamps']
+        start_and_stop_time_stamps = self.get_Timestamps_For_Each_Frequency_Test(time_stamps, frequencies)
         
         if not (recording == [] or time_data == []) or not (len(recording) == len(time_data)):
             fig, axs = plt.subplots(1)
@@ -88,7 +89,39 @@ class Data_Processor:
             print('none existent or corrupt data to process please check for any problems in your input data!')
     
     @classmethod
-    def get_Reverberation_Time(stop_playing_frequency_time, starting_intensity, data):
+    def get_Timestamps_For_Each_Frequency_Test(self, timestamps, frequencies):
+        
+        start_and_stop_time_stamps = {}
+        for frequency in frequencies:
+            start_frequency_time = int
+            stop_frequency_time = int
+            
+            got_start_time = False
+            got_stop_time = False
+
+            for timestamp in timestamps:
+                if not got_start_time or not got_stop_time:
+                    time_name  = timestamp['time_name']
+                    if time_name.find(str(frequency)) + 1:
+                        if time_name.find('start') + 1:
+                            start_frequency_time = timestamp['time'] - 2
+                            got_start_time  = True
+                        if time_name.find('stop') + 1:
+                            stop_frequency_time = timestamp['time'] + 2
+                            got_stop_time  = True
+                else:
+                    start_and_stop_time_stamps[str(frequency)] = {
+                        'start_frequency_time': start_frequency_time,
+                        'stop_frequency_time': stop_frequency_time,
+                    }
+        return start_and_stop_time_stamps
+
+
+
+
+
+    @classmethod
+    def get_Reverberation_Time(self, stop_playing_frequency_time, starting_intensity, data):
         print('write function here')
     
     @classmethod
