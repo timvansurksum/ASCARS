@@ -19,7 +19,10 @@ class Program:
         if what_to_run == 'calibration':
             Reverberation_Test.run_Calibration()
         elif what_to_run == 'experiment':
-            Reverberation_Test.run_Experiment()
+            print('what position do you want to run an experiment on?')
+            x_position = int(input('enter your x position: '))
+            y_position = int(input('enter your y position: '))
+            Reverberation_Test.run_Experiment(x_position, y_position)
 
 
 

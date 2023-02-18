@@ -1,7 +1,5 @@
-import winsound
 import sounddevice as sd
 from multiprocessing import Process
-import multiprocessing
 import numpy as np
 import os
 import time

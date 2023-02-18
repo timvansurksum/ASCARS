@@ -33,7 +33,7 @@ class Reverberation_Test:
     
     @classmethod
     def format_Sensor_Data(self, return_dict_playback, return_dict_recorder):
-        time_data = np.linspace(0,35,35*44100)
+        time_data = np.linspace(0, 35, 35*44100)
         
 
         get_time_relative_from_start = lambda time, time_name: {'time_name': time_name,'time': time-return_dict_recorder['start_recording']}
@@ -45,7 +45,7 @@ class Reverberation_Test:
         return expirement_data
     
     @classmethod
-    def run_Experiment(self):
+    def run_Experiment(self, x, y):
         print('running experiment...:')
         print('\trunning sensor...')
         frequencies  = [400,600,800,1000,1200,1400]
@@ -59,5 +59,5 @@ class Reverberation_Test:
 
 
         print('processing data...')
-        Data_Processor.data_Analysis(expirement_data, frequencies)
+        Data_Processor.data_Analysis(expirement_data, frequencies, x, y)
         print('finished running experiment')
