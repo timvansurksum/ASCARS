@@ -121,13 +121,24 @@ class Data_Processor:
 
 
     @classmethod
-    def get_Reverberation_Time(self, stop_playing_frequency_time, starting_intensity, data):
-        print('write function here')
+    def get_Reverberation_Time(self, starting_intensity, stop_playing_frequency_time, data):
+        sampling_rate = 44100
+        start_point = stop_playing_frequency_time*sampling_rate
+        stop_point = start_point+2*sampling_rate
+        time_id = 0
+        for point in data[start_point:stop_point]:
+            if point < starting_intensity - 30:
+                break
+            else:
+                time_id += 1
+        reveberation_time = stop_playing_frequency_time + time_id/sampling_rate
+        return reveberation_time
     
     @classmethod
     def get_Starting_intensity(self, smoothed_recording, start_frequency_time, stop_frequency_time):
-        starting_intensity_value = int((start_frequency_time)*44100)-1
-        last_intensity_value = int(stop_frequency_time*44100)
+        sampling_rate = 44100
+        starting_intensity_value = int((start_frequency_time)*sampling_rate)-1
+        last_intensity_value = int(stop_frequency_time*sampling_rate)
         values_to_get_avarage_over = smoothed_recording[starting_intensity_value:last_intensity_value]
         starting_intensity = sum(values_to_get_avarage_over)/len(values_to_get_avarage_over)
         return starting_intensity
