@@ -61,7 +61,7 @@ class Reverberation_Test:
         existing_calibration_data.to_csv('./data/calibration/calibration_data.csv', sep=',', encoding='utf-8', index=False)
 
     @classmethod
-    def run_Sensor(self):
+    def run_Sensor(self, frequencies):
 
         audio_device_name  = Sensor_Controller.set_Audio_Devices()
         get_Min = lambda sound_sample: float(sound_sample[0])
