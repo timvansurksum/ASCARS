@@ -80,7 +80,7 @@ class Data_Processor:
             "graph_lines": graph_lines
         }
         general_data_with_experiment_run = open('./data/reverberation_data/general_data.json', 'w')
-        general_data_with_experiment_run.write(json.dumps(general_data))
+        general_data_with_experiment_run.write(json.dumps(general_data, indent='\t'))
         general_data_with_experiment_run.close()
         recording_data = pd.DataFrame({
             "recording": recording,
