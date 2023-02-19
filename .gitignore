@@ -1,4 +1,6 @@
-data/
+data/calibration
+data/reverberation_data/recordings
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
