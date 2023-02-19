@@ -11,27 +11,46 @@ class Program:
 
 
     def start_Text_Based():
-        print('running ASCARS')
-        what_to_run = input("what do you want to run?.. 'calibration' or 'experiment'?: ")
+        print('running ASCARS...')
 
-        while not what_to_run in ['calibration', 'experiment']:
-            what_to_run = input("please enter a valid option your options are: 'calibration' or 'experiment' ")
-        if what_to_run == 'calibration':
-            Reverberation_Test.run_Calibration()
-        elif what_to_run == 'experiment':
-            run_or_view_experiment = input("do you want to run an experiment or view data? enter 'run' or 'view': ")
-            while not run_or_view_experiment in ['run', 'view']:
-                run_or_view_experiment = input("invalid input enter either 'run' or 'view': ")
+        running = True
+        while running:
+            what_to_run = input("what do you want to run?.. 'calibration', 'experiment' or 'end' to end the program?: ")
+            while not what_to_run in ['calibration', 'experiment', 'end']:
+                what_to_run = input("please enter a valid option your options are: 'calibration', 'experiment' 'end': ")
+            if what_to_run == 'calibration':
+                Reverberation_Test.run_Calibration()
+            elif what_to_run == 'experiment':
+                
+                run_or_view_experiment = input("do you want to run an experiment, view data or end the program?\nenter 'run', 'view', or 'stop: ")
+                while not run_or_view_experiment in ['run', 'view', 'stop']:
+                    run_or_view_experiment = input("invalid input enter either 'run' or 'view': ")
+                
+                if run_or_view_experiment ==  'view':
+                    print('feature not implementen yet')
+                if run_or_view_experiment ==  'run':
+                    
+                    running_experiments = True
+                    while running_experiments:
+                    
+                        print('what position do you want to run an experiment on?')
+                        x_position = int(input('enter your x position: '))
+                        y_position = int(input('enter your y position: '))
+                        Reverberation_Test.run_Experiment(x_position, y_position)
+                        keep_running = input("do you want to run another test? 'yes' or 'no': ")
+                        
+                        while not run_or_view_experiment in ['yes', 'no']:
+                            run_or_view_experiment = input("invalid input enter either 'yes' or 'no': ")
+                        if keep_running == 'yes':
+                            running_experiments == True
+                        else:
+                            running_experiments == False
+            if run_or_view_experiment ==  'stop':
+                running = False
 
-            if run_or_view_experiment ==  'view':
-                print('feature not implementen yet')
-            if run_or_view_experiment ==  'run':
-                running_experiments = True
-                while running_experiments:
-                print('what position do you want to run an experiment on?')
-                x_position = int(input('enter your x position: '))
-                y_position = int(input('enter your y position: '))
-                Reverberation_Test.run_Experiment(x_position, y_position)
+                            
+                
+                
 
 
 
