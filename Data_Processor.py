@@ -52,7 +52,7 @@ class Data_Processor:
             smoothed_recording = self.smooth_Sound(recording, avaraging_window_in_number_of_samples)
             graph_lines = self.get_lines(smoothed_recording, time_stamps, start_and_stop_time_stamps)
             
-            self.write_Experiment_Data_to_File(frequencies, graph_lines, recording, time_data)
+            self.write_Experiment_Data_to_File(frequencies, graph_lines, recording, time_data, x, y)
             return True
             
         else:
@@ -60,7 +60,7 @@ class Data_Processor:
             return False
     
     @classmethod
-    def write_Experiment_Data_to_File(self, frequencies, graph_lines, recording, time_data):
+    def write_Experiment_Data_to_File(self, frequencies, graph_lines, recording, time_data, x, y):
         general_data = open('./data/reverberation_data/general_data.json', 'r').read()
         try:
             general_data = json.loads(general_data)
