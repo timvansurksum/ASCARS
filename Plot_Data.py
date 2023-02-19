@@ -3,7 +3,10 @@ import pandas as pd
 
 class Plot_Data:
     
-    
+    @classmethod
+    def graph_Experiment_Data(self, time_data, smoothed_recording, time_stamps, start_and_stop_time_stamps, graph_lines):
+        fig, axs = plt.subplots(1, 1 + len(start_and_stop_time_stamps))
+                
     @classmethod
     def graph_Kalibration(self, kalibration_data: pd.DataFrame):
         frequencies = list(kalibration_data.drop_duplicates(subset=['frequency']).to_dict()['frequency'].values())

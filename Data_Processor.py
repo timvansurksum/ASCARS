@@ -3,9 +3,6 @@ import json
 
 class Data_Processor:
 
-
-
-    
     @classmethod
     def process_Calibration_Data(self, calibration_data, frequency):
             recording = list(map(abs, calibration_data['recording']))
@@ -18,6 +15,7 @@ class Data_Processor:
                 'microphone_intensity': intensity
             })
             return calibration_data_point
+
     @classmethod
     def data_Analysis(self, expirement_data, frequencies, x, y):
         time_data = expirement_data['time_data']
@@ -157,53 +155,6 @@ class Data_Processor:
         return starting_intensity
 
     @classmethod
-    def graph_Experiment_Data(self, time_data, smoothed_recording, time_stamps, start_and_stop_time_stamps, graph_lines):
-        fig, axs = plt.subplots(1, 1 + len(start_and_stop_time_stamps))
-            
-
-        #define horizontal and vertical lines
-        label_height = 1
-        frequency_timings = {}
-        
-
-        for time_stamp in time_stamps:
-            label = time_stamp['time_name']
-            time = time_stamp['time']
-            if (str(label).find('start_frequency_') + 1):
-                frequency = str(label).strip('start_frequency_')
-                frequency_timings[frequency] = {}
-                frequency_timings[frequency]['start_time'] = time
-            if (str(label).find('stop_frequency_') + 1):
-                frequency = str(label).strip('stop_frequency_')
-                frequency_timings[frequency]['stop_time'] = time
-
-            axs[0].vlines(time, 0, 100, label=label, linestyles='dotted', colors='g')
-
-
-            if label_height:
-                axs[0].text(time, 60, label, backgroundcolor='dimgray', color='white')
-                label_height = 0
-            else:
-                axs[0].text(time, 50, label, backgroundcolor='grey', color='white')
-                label_height = 1
-        for frequency_timing in frequency_timings.values():
-            starting_intesity = self.get_Starting_intensity(smoothed_recording, frequency_timing['start_time']+0.5, frequency_timing['stop_time'])
-            axs[0].hlines(
-                        starting_intesity, 
-                        frequency_timing['start_time'] - 0.5, 
-                        frequency_timing['stop_time'] + 0.5, 
-                        label=label, 
-                        linestyles='dotted', 
-                        colors='g'
-                        )
-        #make graphs per frequency
-        
-        #make full graph
-        axs[0].plot(time_data, smoothed_recording)
-        plt.show()
-
-
-    @classmethod
     def get_Timestamps_For_Each_Frequency_Test(self, timestamps, frequencies):
         
         start_and_stop_time_stamps = {}
@@ -231,7 +182,6 @@ class Data_Processor:
                     }
         return start_and_stop_time_stamps
 
-    
     @classmethod
     def smooth_Sound(self, recording, avaraging_window_in_number_of_samples):
         recording = list(map(abs, recording))
