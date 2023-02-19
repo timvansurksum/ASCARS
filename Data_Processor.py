@@ -29,7 +29,7 @@ class Data_Processor:
             smoothed_recording = self.smooth_Sound(recording, avaraging_window_in_number_of_samples)
             graph_lines = self.get_lines(smoothed_recording, time_stamps, start_and_stop_time_stamps)
             
-            self.write_Experiment_Data_to_File(frequencies, graph_lines, recording, time_data, x, y)
+            self.write_Experiment_Data_to_File(frequencies, graph_lines, smoothed_recording, time_data, x, y)
             return True
             
         else:
@@ -37,7 +37,7 @@ class Data_Processor:
             return False
     
     @classmethod
-    def write_Experiment_Data_to_File(self, frequencies, graph_lines, recording, time_data, x, y):
+    def write_Experiment_Data_to_File(self, frequencies, graph_lines, smoothed_recording, time_data, x, y):
         general_data = open('./data/reverberation_data/general_data.json', 'r').read()
         try:
             general_data = json.loads(general_data)
@@ -60,7 +60,7 @@ class Data_Processor:
         general_data_with_experiment_run.write(json.dumps(general_data, indent='\t'))
         general_data_with_experiment_run.close()
         recording_data = pd.DataFrame({
-            "recording": recording,
+            "recording": smoothed_recording,
             "time_data": time_data
         })
         recording_data.to_csv(f"./data/reverberation_data/recordings/{x}_{y}.csv", ',', index=False)
@@ -93,39 +93,40 @@ class Data_Processor:
                 'x_value': reverberation_time,
                 'y_upper_bound' : starting_intensity,
                 'y_lower_bound' : starting_intensity-10,
-                'label_y': starting_intensity-(10/2),
-                'label_x': reverberation_time
+                'label_x': reverberation_time,
+                'label_y': starting_intensity-(10/2)
             }
 
             lines_by_frequency['vertical_lines']['start_playing'] = {
                 'x_value': start_playing_frequency_time,
                 'y_upper_bound' : starting_intensity*1.3,
                 'y_lower_bound' : 0,
-                'label_y': starting_intensity*1.2,
-                'label_x': start_playing_frequency_time
+                'label_x': start_playing_frequency_time,
+                'label_y': starting_intensity*1.2
             }
 
             lines_by_frequency['vertical_lines']['stop_playing'] = {
                 'x_value': stop_playing_frequency_time,
                 'y_upper_bound' : starting_intensity*1.3,
                 'y_lower_bound' : 0,
-                'label_y': starting_intensity*1.2,
-                'label_x': stop_playing_frequency_time
+                'label_x': stop_playing_frequency_time,
+                'label_y': starting_intensity*1.2
             }
 
             lines_by_frequency['horizontal_lines']['starting_intensity']  = {
                 'y_value': starting_intensity,
-                'label_y': starting_intensity*1.2,
-                'label_y': stop_playing_frequency_time,
                 'x_upper_bound' : stop_playing_frequency_time + 2,
-                'x_lower_bound' : start_playing_frequency_time - 2
+                'x_lower_bound' : start_playing_frequency_time - 2,
+                'label_x': stop_playing_frequency_time,
+                'label_y': starting_intensity*1.2
             }
 
             lines_by_frequency['horizontal_lines']['reverberation_intensity']  = {
                 'y_value': starting_intensity-10,
-                'label_height': (starting_intensity-10)*1.2,
                 'x_upper_bound' : stop_playing_frequency_time + 2,
-                'x_lower_bound' : start_playing_frequency_time - 2
+                'x_lower_bound' : start_playing_frequency_time - 2,
+                'label_x': stop_playing_frequency_time,
+                'label_y': (starting_intensity-10)*1.2
             }
 
             lines[str(frequency)] = lines_by_frequency
@@ -148,7 +149,7 @@ class Data_Processor:
     @classmethod
     def get_Starting_intensity(self, smoothed_recording, start_frequency_time, stop_frequency_time):
         sampling_rate = 44100
-        starting_intensity_value = int((start_frequency_time)*sampling_rate)-1
+        starting_intensity_value = int((stop_frequency_time)*sampling_rate)-1
         last_intensity_value = int(stop_frequency_time*sampling_rate)
         values_to_get_avarage_over = smoothed_recording[starting_intensity_value:last_intensity_value]
         starting_intensity = sum(values_to_get_avarage_over)/len(values_to_get_avarage_over)

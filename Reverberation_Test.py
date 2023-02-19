@@ -17,7 +17,6 @@ class Reverberation_Test:
         print('showing calibration graphs...')
         Plot_Data.graph_Kalibration(kalibration_data)
 
-
     @classmethod
     def run_Calibration(self):
         done_running_frequencies = 0
