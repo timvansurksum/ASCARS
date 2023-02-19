@@ -8,7 +8,7 @@ import numpy as np
 class Reverberation_Test:
     
     @classmethod
-    def run_Calibration():
+    def run_Calibration(self):
         print('run calibration here')
 
     @classmethod
