@@ -1,9 +1,12 @@
 from Sensor_Controller import Sensor_Controller
 from Data_Processor import Data_Processor
+from Plot_Data import Plot_Data
 import multiprocessing
 from multiprocessing import Process
 import numpy as np
 import pandas as pd
+
+
 
 
 class Reverberation_Test:
@@ -12,8 +15,7 @@ class Reverberation_Test:
     def show_Calibration(self):
         kalibration_data = pd.read_csv('./data/calibration/calibration_data.csv')
         print('showing calibration graphs...')
-        Data_Processor.graph_Kalibration(kalibration_data)
-
+        Plot_Data.graph_Kalibration(kalibration_data)
 
     @classmethod
     def run_Calibration(self):
@@ -61,7 +63,7 @@ class Reverberation_Test:
         existing_calibration_data.to_csv('./data/calibration/calibration_data.csv', sep=',', encoding='utf-8', index=False)
 
     @classmethod
-    def run_Sensor(self):
+    def run_Sensor(self, frequencies):
 
         audio_device_name  = Sensor_Controller.set_Audio_Devices()
         get_Min = lambda sound_sample: float(sound_sample[0])
@@ -72,7 +74,7 @@ class Reverberation_Test:
         record_sound_async.start()
         
         return_dict_playback = manager.dict()
-        play_sound_async = Process(target=Sensor_Controller.play_Sounds, args=([400,600,800,1000,1200,1400], return_dict_playback, audio_device_name['play_device_name']))
+        play_sound_async = Process(target=Sensor_Controller.play_Sounds, args=(frequencies, return_dict_playback, audio_device_name['play_device_name']))
         play_sound_async.start()
         play_sound_async.join()
         record_sound_async.join()
@@ -82,7 +84,7 @@ class Reverberation_Test:
     
     @classmethod
     def format_Sensor_Data(self, return_dict_playback, return_dict_recorder):
-        time_data = np.linspace(0,35,35*44100)
+        time_data = np.linspace(0, 35, 35*44100)
         
 
         get_time_relative_from_start = lambda time, time_name: {'time_name': time_name,'time': time-return_dict_recorder['start_recording']}
@@ -94,10 +96,11 @@ class Reverberation_Test:
         return expirement_data
     
     @classmethod
-    def run_Experiment(self):
+    def run_Experiment(self, x, y):
         print('running experiment...:')
         print('\trunning sensor...')
-        return_dict_playback, return_dict_recorder = self.run_Sensor()
+        frequencies  = [400,600,800,1000,1200,1400]
+        return_dict_playback, return_dict_recorder = self.run_Sensor(frequencies)
         print('\tdone running sensor')
         
         
@@ -107,5 +110,5 @@ class Reverberation_Test:
 
 
         print('processing data...')
-        Data_Processor.data_Analysis(expirement_data)
+        Data_Processor.data_Analysis(expirement_data, frequencies, x, y)
         print('finished running experiment')
