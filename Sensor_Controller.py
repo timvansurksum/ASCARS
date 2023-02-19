@@ -1,8 +1,9 @@
 import sounddevice as sd
+from multiprocessing import Process
+import numpy as np
 import os
 import time
 from pysinewave import SineWave
-import multiprocessing
 
 
 class Sensor_Controller:

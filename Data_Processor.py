@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import json
 
 class Data_Processor:
 
@@ -38,7 +39,7 @@ class Data_Processor:
             })
             return calibration_data_point
     @classmethod
-    def data_Analysis(self, expirement_data, frequencies):
+    def data_Analysis(self, expirement_data, frequencies, x, y):
         time_data = expirement_data['time_data']
         recording = expirement_data['recording']
         time_stamps = expirement_data['timestamps']
@@ -50,11 +51,41 @@ class Data_Processor:
             smoothed_recording = self.smooth_Sound(recording, avaraging_window_in_number_of_samples)
             graph_lines = self.get_lines(smoothed_recording, time_stamps, start_and_stop_time_stamps)
             
+            self.write_Experiment_Data_to_File(frequencies, graph_lines, recording, time_data, x, y)
+            return True
             
-            self.graph_Experiment_Data(time_data, smoothed_recording, time_stamps, start_and_stop_time_stamps, graph_lines)
         else:
             print('none existent or corrupt data to process please check for any problems in your input data!')
+            return False
     
+    @classmethod
+    def write_Experiment_Data_to_File(self, frequencies, graph_lines, recording, time_data, x, y):
+        general_data = open('./data/reverberation_data/general_data.json', 'r').read()
+        try:
+            general_data = json.loads(general_data)
+        except:
+            general_data = {}
+
+        if not 'x_value' in general_data.keys():
+            general_data["x_value"] = {}
+        if not str(x) in general_data["x_value"].keys():
+            general_data["x_value"][str(x)] = {'y_value': {}}
+        if not 'y_value' in general_data["x_value"][str(x)]:
+            general_data["x_value"][str(x)] = {'y_value': {}}
+        
+        general_data["x_value"][str(x)]['y_value'][str(y)] = {
+            "recording_file_name": f"{x}_{y}.csv",
+            "frequencies": frequencies,
+            "graph_lines": graph_lines
+        }
+        general_data_with_experiment_run = open('./data/reverberation_data/general_data.json', 'w')
+        general_data_with_experiment_run.write(json.dumps(general_data, indent='\t'))
+        general_data_with_experiment_run.close()
+        recording_data = pd.DataFrame({
+            "recording": recording,
+            "time_data": time_data
+        })
+        recording_data.to_csv(f"./data/reverberation_data/recordings/{x}_{y}.csv", ',', index=False)
 
     @classmethod
     def get_lines(self, smoothed_recording, time_stamps, start_and_stop_time_stamps):
