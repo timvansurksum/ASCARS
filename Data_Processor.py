@@ -5,14 +5,16 @@ class Data_Processor:
 
     @classmethod
     def process_Calibration_Data(self, calibration_data, frequency):
-            recording = list(map(abs, calibration_data['recording']))
+            get_Min = lambda sound_sample: float(sound_sample[0])
+            recording = list(map(get_Min, calibration_data["recording"]))
+            recording = list(map(abs, recording))
             smooth_recording = self.smooth_Sound(recording, 441)
             intensity = self.get_Starting_intensity(smooth_recording, 0, 1)
             DB_level = calibration_data['DB_level']
             calibration_data_point = pd.DataFrame({
-                'DB_level': DB_level,
-                'frequency': frequency,
-                'microphone_intensity': intensity
+                'DB_level': [DB_level],
+                'frequency': [frequency],
+                'microphone_intensity': [intensity]
             })
             return calibration_data_point
 
@@ -149,7 +151,7 @@ class Data_Processor:
     @classmethod
     def get_Starting_intensity(self, smoothed_recording, start_frequency_time, stop_frequency_time):
         sampling_rate = 44100
-        starting_intensity_value = int((stop_frequency_time)*sampling_rate)-1
+        starting_intensity_value = int((stop_frequency_time)*sampling_rate)-1*sampling_rate
         last_intensity_value = int(stop_frequency_time*sampling_rate)
         values_to_get_avarage_over = smoothed_recording[starting_intensity_value:last_intensity_value]
         starting_intensity = sum(values_to_get_avarage_over)/len(values_to_get_avarage_over)

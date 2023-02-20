@@ -20,7 +20,14 @@ class Program:
             while not (what_to_run in ['calibration', 'experiment', 'end']):
                 what_to_run = input("please enter a valid option your options are: 'calibration', 'experiment' 'end': ")
             if what_to_run == 'calibration':
-                Reverberation_Test.run_Calibration()
+                run_or_view_calibration = input("do you want to run an calibration, view data or end the program?\nenter 'run', 'view', or 'stop: ")
+                while not (run_or_view_calibration in ['run', 'view']):
+                    run_or_view_calibration = input("invalid input enter either 'run' or 'view': ")
+                
+                if run_or_view_calibration == "run":
+                    Reverberation_Test.run_Calibration()
+                if run_or_view_calibration == "view":
+                    Reverberation_Test.show_Calibration()
             elif what_to_run == 'experiment':
                 
                 run_or_view_experiment = input("do you want to run an experiment, view data or end the program?\nenter 'run', 'view', or 'stop: ")

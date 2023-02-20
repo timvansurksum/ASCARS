@@ -57,8 +57,8 @@ class Plot_Data:
                 label_y = vertical_line["label_y"]
 
                 axs[graph_id].vlines(x_value, y_lower_bound, y_upper_bound, colors='k', linestyles='dotted')
-                # axs[graph_id].text(label_x, label_y, vertical_line_title)
-                # axs[0].text(label_x, label_y, vertical_line_title)
+                axs[graph_id].text(label_x, label_y, vertical_line_title)
+                axs[0].text(label_x, label_y, vertical_line_title)
 
                 axs[0].vlines(x_value, y_lower_bound, y_upper_bound, colors='k', linestyles='dotted')
 
@@ -73,29 +73,22 @@ class Plot_Data:
                 label_y = horizontal_line["label_y"]
 
                 axs[graph_id].hlines(y_value, x_lower_bound, x_upper_bound, colors='k', linestyles='dotted')
-                # axs[graph_id].text(label_x, label_y, horizontal_line_title)
-                # axs[0].text(label_x, label_y, horizontal_line_title)
+                axs[graph_id].text(label_x, label_y, horizontal_line_title)
+                axs[0].text(label_x, label_y, horizontal_line_title)
 
                 axs[0].hlines(y_value, x_lower_bound, x_upper_bound, colors='k', linestyles='dotted')
-
-        
         plt.show()
-        
-
-
-        
-
-                
+           
     @classmethod
     def graph_Kalibration(self, kalibration_data: pd.DataFrame):
         frequencies = list(kalibration_data.drop_duplicates(subset=['frequency']).to_dict()['frequency'].values())
         frequency_count = len(frequencies)
-        fig, axs = plt.subplots(frequency_count, 1)
-        plt.title('calibration graphs')
+        fig, axs = plt.subplots(1, frequency_count)
+        fig.suptitle('calibration graphs')
         for frequency_id in range(frequency_count):
             frequency = frequencies[frequency_id]
             kalibration_data_with_current_frequency = kalibration_data[kalibration_data["frequency"] == frequency] 
-            kalibration_data_dictionairy = kalibration_data_with_current_frequency.to_dict()
+            kalibration_data_dictionairy = kalibration_data_with_current_frequency.sort_values(by="microphone_intensity").to_dict()
             
             microphone_intensity_values = list(kalibration_data_dictionairy['microphone_intensity'].values())
             DB_level_values = list(kalibration_data_dictionairy['DB_level'].values())
