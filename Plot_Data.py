@@ -1,6 +1,9 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import json
+from Data_Processor import Data_Processor
+import seaborn as sns
+
 
 class Plot_Data:
     
@@ -97,4 +100,15 @@ class Plot_Data:
             axs[frequency_id].set_title(f'kalibration graph of {str(frequency)}hz frequency')
             axs[frequency_id].set_xlabel('intensity_values')
             axs[frequency_id].set_ylabel('DB_values')
+        plt.show()
+    
+        
+    @classmethod
+    def heat_mapped(file_location, frequencie):
+        imported_data = Data_Processor.process_General_Data_For_Heat_Map(file_location, frequencie)
+        transformed_data = imported_data.pivot("pos_x", "pos_y", "reverberation_time")
+
+        sns.heatmap(transformed_data, vmin=0, vmax=2)
+        plt.xlabel("Afstand y (m)")
+        plt.ylabel("Afstand x (m)")
         plt.show()

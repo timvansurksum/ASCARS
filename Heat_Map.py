@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 class Heat_Map:
     
-    def heat_map_data(file_location, frequencie):
+    def process_General_Data_For_Heat_Map(file_location, frequencie):
         general_data = pd.read_json(file_location).to_dict()
 
         x_positions_list = []
@@ -28,7 +28,7 @@ class Heat_Map:
     
 
     def heat_mapped(file_location, frequencie):
-        imported_data = Heat_Map.heat_map_data(file_location, frequencie)
+        imported_data = Heat_Map.process_General_Data_For_Heat_Map(file_location, frequencie)
         transformed_data = imported_data.pivot("pos_x", "pos_y", "reverberation_time")
 
         sns.heatmap(transformed_data, vmin=0, vmax=2)

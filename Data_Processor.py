@@ -30,8 +30,7 @@ class Data_Processor:
         expirement_data, 
         frequencies, 
         x, 
-        y
-        ):
+        y):
         
         time_data = expirement_data['time_data']
         recording = expirement_data['recording']
@@ -65,8 +64,7 @@ class Data_Processor:
         smoothed_recording, 
         time_data, 
         x,
-        y
-        ):
+        y):
 
         general_data = open('./data/reverberation_data/general_data.json', 'r').read()
         try:
@@ -282,3 +280,40 @@ class Data_Processor:
             index += 1
 
         return smoothed_recording
+    
+    def process_General_Data_For_Heat_Map(file_location, frequency):
+        general_data = pd.read_json(file_location).to_dict()
+
+        x_positions_list = []
+        y_positions_list = []
+        reverberation_time_list = []
+        data = general_data["x_value"]
+        
+        for x_value in data:
+            
+            column = data[x_value]["y_value"]
+            for y_value in column:
+                reverberation_test = general_data["x_value"][x_value]["y_value"][y_value]
+                
+                if frequency in reverberation_test["frequencies"]:
+                    frequency_key = str(frequency)
+                    
+                    time_of_reverberation = reverberation_test["graph_lines"][frequency_key]["vertical_lines"]["reverberation_time"]["x_value"]
+                    stop_frequency_time = reverberation_test["graph_lines"][frequency_key]["vertical_lines"]["stop_playing"]["x_value"]
+                    reverberation_time = round(((time_of_reverberation-stop_frequency_time)*6), 2)
+
+                    x_positions_list.append(float(x_value))
+                    y_positions_list.append(float(y_value))
+                    reverberation_time_list.append(float(reverberation_time))
+            
+        heat_map_dataframe = pd.DataFrame(
+            list(
+                zip(
+                    x_positions_list, 
+                    y_positions_list, 
+                    reverberation_time_list
+                    )
+                ), 
+            columns=["pos_x", "pos_y", "reverberation_time"]
+        )       
+        return heat_map_dataframe
