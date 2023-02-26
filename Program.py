@@ -37,18 +37,18 @@ class Program:
                     Reverberation_Test.show_Calibration()
             
             elif what_to_run == 'experiment': 
-                run_or_view_experiment = input("Do you want to run an experiment, view data or end the program?\nEnter 'run', 'view', or 'stop: ")
+                experiment_option = input("Do you want to run an experiment, view data or end the program?\nEnter 'run', 'view', 'heatmap', or 'stop: ")
                 
-                while not (run_or_view_experiment in ['run', 'view']):
-                    run_or_view_experiment = input("Invalid input, please enter either 'run' or 'view': ")
+                while not (experiment_option in ['run', 'view', 'heatmap']):
+                    experiment_option = input("Invalid input, please enter either 'run' or 'view': ")
                 
-                if run_or_view_experiment ==  'view':
+                if experiment_option ==  'view':
                         print('What position do you want to run an experiment on?')
                         x_position = str(input('Enter your x position: '))
                         y_position = str(input('Enter your y position: '))
                         Plot_Data.graph_Experiment_Data(x_position, y_position)
                 
-                if run_or_view_experiment ==  'run':
+                if experiment_option ==  'run':
                     running_experiments = True
                     
                     while running_experiments:
@@ -66,6 +66,18 @@ class Program:
                         
                         elif keep_running == 'no':
                             running_experiments = False
+                
+                if experiment_option ==  'heatmap':
+                    frequency = input("what frequency do you want to run?:")
             
+                    while not (frequency.isdigit()):
+                        frequency = input("invalid input!\nplease enter an integer:")
+                    
+
+                    file_location = './data/reverberation_data/general_data.json'
+                    print('showing heatmap...')
+                    Plot_Data.show_Heatmap(file_location, frequency)
+                    print('done showing heatmap!')
+                
             if what_to_run ==  'end':
                 running = False

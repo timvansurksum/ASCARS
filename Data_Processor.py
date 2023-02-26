@@ -36,11 +36,10 @@ class Data_Processor:
         recording = expirement_data['recording']
         time_stamps = expirement_data['timestamps']
         start_and_stop_time_stamps = self.get_Timestamps_For_Each_Frequency_Test(time_stamps, frequencies)
-        
-        if not (
-            recording == [] 
-            or time_data == [] 
-            or (len(recording) == len(time_data))
+        if (
+            not (recording == [] 
+            or time_data == [])
+            and (len(recording) == len(time_data))
             ):
 
             averaging_window_in_number_of_samples = 441 # in settings file nog fixen
@@ -66,9 +65,9 @@ class Data_Processor:
         x,
         y):
 
-        general_data = open('./data/reverberation_data/general_data.json', 'r').read()
+        existing_general_data = open('data/reverberation_data/general_data.json', 'r').read()
         try:
-            general_data = json.loads(general_data)
+            general_data = json.loads(existing_general_data)
         except:
             general_data = {}
 
@@ -86,10 +85,15 @@ class Data_Processor:
             "frequencies": frequencies,
             "graph_lines": graph_lines
         }
+        print(type(general_data))
 
-        general_data_with_experiment_run = open('./data/reverberation_data/general_data.json', 'w')
-        general_data_with_experiment_run.write(json.dumps(general_data, indent='\t'))
-        general_data_with_experiment_run.close()
+        with open('data/reverberation_data/general_data.json', 'w') as fp:
+            fp.write(str(general_data).replace("'", '"'))
+
+        # general_data_with_experiment_run = open('data/reverberation_data/general_data.json', 'w')
+        # file_data = json.dumps(obj = general_data, indent='\t')
+        # general_data_with_experiment_run.write(file_data)
+        # general_data_with_experiment_run.close()
         
         recording_data = pd.DataFrame({
             "recording": smoothed_recording,
@@ -281,7 +285,8 @@ class Data_Processor:
 
         return smoothed_recording
     
-    def process_General_Data_For_Heat_Map(file_location, frequency):
+    @classmethod
+    def process_General_Data_For_Heat_Map(self, file_location: str, frequency: int):
         general_data = pd.read_json(file_location).to_dict()
 
         x_positions_list = []
@@ -295,7 +300,7 @@ class Data_Processor:
             for y_value in column:
                 reverberation_test = general_data["x_value"][x_value]["y_value"][y_value]
                 
-                if frequency in reverberation_test["frequencies"]:
+                if int(frequency) in reverberation_test["frequencies"]:
                     frequency_key = str(frequency)
                     
                     time_of_reverberation = reverberation_test["graph_lines"][frequency_key]["vertical_lines"]["reverberation_time"]["x_value"]

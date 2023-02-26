@@ -104,7 +104,7 @@ class Plot_Data:
     
         
     @classmethod
-    def heat_mapped(file_location, frequencie):
+    def show_Heatmap(self, file_location, frequencie):
         imported_data = Data_Processor.process_General_Data_For_Heat_Map(file_location, frequencie)
         transformed_data = imported_data.pivot("pos_x", "pos_y", "reverberation_time")
 
