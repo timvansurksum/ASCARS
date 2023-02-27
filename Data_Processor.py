@@ -32,9 +32,10 @@ class Data_Processor:
 
             avaraging_window_in_number_of_samples = 441
             smoothed_recording = self.smooth_Sound(recording, avaraging_window_in_number_of_samples)
-            graph_lines = self.get_lines(smoothed_recording, time_stamps, start_and_stop_time_stamps)
+            calibrated_recording = self.apply_Calibration_to_recording_data(smoothed_recording)
+            graph_lines = self.get_lines(calibrated_recording, time_stamps, start_and_stop_time_stamps)
             
-            self.write_Experiment_Data_to_File(frequencies, graph_lines, smoothed_recording, time_data, x, y)
+            self.write_Experiment_Data_to_File(frequencies, graph_lines, calibrated_recording, time_data, x, y)
             return True
             
         else:
@@ -194,8 +195,6 @@ class Data_Processor:
     @classmethod
     def smooth_Sound(self, recording, avaraging_window_in_number_of_samples):
         recording = list(map(abs, recording))
-        amplify = lambda datapoint: datapoint*100
-        recording = list(map(amplify, recording))
 
         smoothed_recording = []
         sample_count = len(recording)
@@ -255,3 +254,40 @@ class Data_Processor:
             columns=["pos_x", "pos_y", "reverberation_time"]
         )       
         return heat_map_dataframe
+    
+    @classmethod
+    def apply_Calibration_to_recording_data(self, smoothed_recording):
+        calibration_data = pd.read_csv("data\calibration\calibration_data.csv").to_dict()
+        calibrated_data = []
+        for datapoint in smoothed_recording:
+            index = -1
+            for intensity_point in calibration_data['microphone_intensity'].values():
+                index += 1
+                if intensity_point > datapoint:
+                    upper_bound = intensity_point           
+                    if index == 0:
+                        lower_bound = 0
+                    elif index == len(calibration_data['microphone_intensity']) - 1:
+                        lower_bound = calibration_data['microphone_intensity'][index-1]
+                    else:
+                        lower_bound = calibration_data['microphone_intensity'][index-1]
+                        
+                    
+                    span =  upper_bound - lower_bound
+                    point = datapoint - lower_bound
+                    portion = point/span
+                    break
+            if index == 0:
+                upper_DB_bound = calibration_data['DB_level'][index]
+                DB_value = upper_DB_bound*portion
+            else:
+                lower_DB_bound = calibration_data['DB_level'][index-1]
+                upper_DB_bound = calibration_data['DB_level'][index]
+                DB_value = lower_DB_bound + (upper_DB_bound-lower_DB_bound)*portion
+            if DB_value > 100:
+                y = 3
+            calibrated_data.append(DB_value)
+
+        return calibrated_data
+
+
