@@ -219,7 +219,8 @@ class Data_Processor:
     
     @classmethod
     def process_General_Data_For_Heat_Map(self, file_location: str, frequency: int):
-        general_data = pd.read_json(file_location).to_dict()
+        general_data = open(file_location, 'r').read()
+        general_data = json.loads(general_data)
 
         x_positions_list = []
         y_positions_list = []
