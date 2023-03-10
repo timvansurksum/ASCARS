@@ -1,60 +1,78 @@
-import matplotlib.pyplot as plt
 import pandas as pd
+import json
 
 class Data_Processor:
 
     @classmethod
-    def graph_Kalibration(self, kalibration_data: pd.DataFrame):
-        frequencies = list(kalibration_data.drop_duplicates(subset=['frequency']).to_dict()['frequency'].values())
-        frequency_count = len(frequencies)
-        fig, axs = plt.subplots(frequency_count, 1)
-        plt.title('calibration graphs')
-        for frequency_id in range(frequency_count):
-            frequency = frequencies[frequency_id]
-            kalibration_data_with_current_frequency = kalibration_data[kalibration_data["frequency"] == frequency] 
-            kalibration_data_dictionairy = kalibration_data_with_current_frequency.to_dict()
-            
-            microphone_intensity_values = list(kalibration_data_dictionairy['microphone_intensity'].values())
-            DB_level_values = list(kalibration_data_dictionairy['DB_level'].values())
-            
-            axs[frequency_id].plot(microphone_intensity_values, DB_level_values)
-            axs[frequency_id].set_title(f'kalibration graph of {str(frequency)}hz frequency')
-            axs[frequency_id].set_xlabel('intensity_values')
-            axs[frequency_id].set_ylabel('DB_values')
-        plt.show()
-        print('done showing calibration graphs')
-
-    
-    @classmethod
     def process_Calibration_Data(self, calibration_data, frequency):
-            recording = list(map(abs, calibration_data['recording']))
+            get_Min = lambda sound_sample: float(sound_sample[0])
+            recording = list(map(get_Min, calibration_data["recording"]))
+            recording = list(map(abs, recording))
             smooth_recording = self.smooth_Sound(recording, 441)
             intensity = self.get_Starting_intensity(smooth_recording, 0, 1)
             DB_level = calibration_data['DB_level']
             calibration_data_point = pd.DataFrame({
-                'DB_level': DB_level,
-                'frequency': frequency,
-                'microphone_intensity': intensity
+                'DB_level': [DB_level],
+                'frequency': [frequency],
+                'microphone_intensity': [intensity]
             })
             return calibration_data_point
+
     @classmethod
-    def data_Analysis(self, expirement_data, frequencies):
+    def data_Analysis(self, expirement_data, frequencies, x, y):
         time_data = expirement_data['time_data']
         recording = expirement_data['recording']
         time_stamps = expirement_data['timestamps']
         start_and_stop_time_stamps = self.get_Timestamps_For_Each_Frequency_Test(time_stamps, frequencies)
-        
-        if not (recording == [] or time_data == []) or not (len(recording) == len(time_data)):
+        if (
+            not (recording == [] 
+            or time_data == [])
+            and (len(recording) == len(time_data))
+            ):
 
             avaraging_window_in_number_of_samples = 441
             smoothed_recording = self.smooth_Sound(recording, avaraging_window_in_number_of_samples)
-            graph_lines = self.get_lines(smoothed_recording, time_stamps, start_and_stop_time_stamps)
+            calibrated_recording = self.apply_Calibration_to_recording_data(smoothed_recording)
+            graph_lines = self.get_lines(calibrated_recording, time_stamps, start_and_stop_time_stamps)
             
+            self.write_Experiment_Data_to_File(frequencies, graph_lines, calibrated_recording, time_data, x, y)
+            return True
             
-            self.graph_Experiment_Data(time_data, smoothed_recording, time_stamps, start_and_stop_time_stamps, graph_lines)
         else:
             print('none existent or corrupt data to process please check for any problems in your input data!')
+            return False
     
+    @classmethod
+    
+    def write_Experiment_Data_to_File(self, frequencies, graph_lines, smoothed_recording, time_data, x, y):
+        
+        existing_general_data = open('./data/reverberation_data/general_data.json', 'r').read()
+
+        try:
+            general_data = json.loads(existing_general_data)
+        except:
+            general_data = {}
+
+        if not 'x_value' in general_data.keys():
+            general_data["x_value"] = {}
+        if not str(x) in general_data["x_value"].keys():
+            general_data["x_value"][str(x)] = {'y_value': {}}
+        if not 'y_value' in general_data["x_value"][str(x)]:
+            general_data["x_value"][str(x)] = {'y_value': {}}
+        
+        general_data["x_value"][str(x)]['y_value'][str(y)] = {
+            "recording_file_name": f"{x}_{y}.csv",
+            "frequencies": frequencies,
+            "graph_lines": graph_lines
+        }
+        general_data_with_experiment_run = open('./data/reverberation_data/general_data.json', 'w')
+        general_data_with_experiment_run.write(json.dumps(general_data, indent='\t'))
+        general_data_with_experiment_run.close()
+        recording_data = pd.DataFrame({
+            "recording": smoothed_recording,
+            "time_data": time_data
+        })
+        recording_data.to_csv(f"./data/reverberation_data/recordings/{x}_{y}.csv", ',', index=False)
 
     @classmethod
     def get_lines(self, smoothed_recording, time_stamps, start_and_stop_time_stamps):
@@ -84,39 +102,40 @@ class Data_Processor:
                 'x_value': reverberation_time,
                 'y_upper_bound' : starting_intensity,
                 'y_lower_bound' : starting_intensity-10,
-                'label_y': starting_intensity-(10/2),
-                'label_x': reverberation_time
+                'label_x': reverberation_time,
+                'label_y': starting_intensity-(10/2)
             }
 
             lines_by_frequency['vertical_lines']['start_playing'] = {
                 'x_value': start_playing_frequency_time,
                 'y_upper_bound' : starting_intensity*1.3,
                 'y_lower_bound' : 0,
-                'label_y': starting_intensity*1.2,
-                'label_x': start_playing_frequency_time
+                'label_x': start_playing_frequency_time,
+                'label_y': starting_intensity*1.2
             }
 
             lines_by_frequency['vertical_lines']['stop_playing'] = {
                 'x_value': stop_playing_frequency_time,
                 'y_upper_bound' : starting_intensity*1.3,
                 'y_lower_bound' : 0,
-                'label_y': starting_intensity*1.2,
-                'label_x': stop_playing_frequency_time
+                'label_x': stop_playing_frequency_time,
+                'label_y': starting_intensity*1.2
             }
 
             lines_by_frequency['horizontal_lines']['starting_intensity']  = {
                 'y_value': starting_intensity,
-                'label_y': starting_intensity*1.2,
-                'label_y': stop_playing_frequency_time,
                 'x_upper_bound' : stop_playing_frequency_time + 2,
-                'x_lower_bound' : start_playing_frequency_time - 2
+                'x_lower_bound' : start_playing_frequency_time - 2,
+                'label_x': stop_playing_frequency_time,
+                'label_y': starting_intensity*1.2
             }
 
             lines_by_frequency['horizontal_lines']['reverberation_intensity']  = {
                 'y_value': starting_intensity-10,
-                'label_height': (starting_intensity-10)*1.2,
                 'x_upper_bound' : stop_playing_frequency_time + 2,
-                'x_lower_bound' : start_playing_frequency_time - 2
+                'x_lower_bound' : start_playing_frequency_time - 2,
+                'label_x': stop_playing_frequency_time,
+                'label_y': (starting_intensity-10)*1.2
             }
 
             lines[str(frequency)] = lines_by_frequency
@@ -139,58 +158,11 @@ class Data_Processor:
     @classmethod
     def get_Starting_intensity(self, smoothed_recording, start_frequency_time, stop_frequency_time):
         sampling_rate = 44100
-        starting_intensity_value = int((start_frequency_time)*sampling_rate)-1
+        starting_intensity_value = int((stop_frequency_time)*sampling_rate)-1*sampling_rate
         last_intensity_value = int(stop_frequency_time*sampling_rate)
         values_to_get_avarage_over = smoothed_recording[starting_intensity_value:last_intensity_value]
         starting_intensity = sum(values_to_get_avarage_over)/len(values_to_get_avarage_over)
         return starting_intensity
-
-    @classmethod
-    def graph_Experiment_Data(self, time_data, smoothed_recording, time_stamps, start_and_stop_time_stamps, graph_lines):
-        fig, axs = plt.subplots(1, 1 + len(start_and_stop_time_stamps))
-            
-
-        #define horizontal and vertical lines
-        label_height = 1
-        frequency_timings = {}
-        
-
-        for time_stamp in time_stamps:
-            label = time_stamp['time_name']
-            time = time_stamp['time']
-            if (str(label).find('start_frequency_') + 1):
-                frequency = str(label).strip('start_frequency_')
-                frequency_timings[frequency] = {}
-                frequency_timings[frequency]['start_time'] = time
-            if (str(label).find('stop_frequency_') + 1):
-                frequency = str(label).strip('stop_frequency_')
-                frequency_timings[frequency]['stop_time'] = time
-
-            axs[0].vlines(time, 0, 100, label=label, linestyles='dotted', colors='g')
-
-
-            if label_height:
-                axs[0].text(time, 60, label, backgroundcolor='dimgray', color='white')
-                label_height = 0
-            else:
-                axs[0].text(time, 50, label, backgroundcolor='grey', color='white')
-                label_height = 1
-        for frequency_timing in frequency_timings.values():
-            starting_intesity = self.get_Starting_intensity(smoothed_recording, frequency_timing['start_time']+0.5, frequency_timing['stop_time'])
-            axs[0].hlines(
-                        starting_intesity, 
-                        frequency_timing['start_time'] - 0.5, 
-                        frequency_timing['stop_time'] + 0.5, 
-                        label=label, 
-                        linestyles='dotted', 
-                        colors='g'
-                        )
-        #make graphs per frequency
-        
-        #make full graph
-        axs[0].plot(time_data, smoothed_recording)
-        plt.show()
-
 
     @classmethod
     def get_Timestamps_For_Each_Frequency_Test(self, timestamps, frequencies):
@@ -220,12 +192,9 @@ class Data_Processor:
                     }
         return start_and_stop_time_stamps
 
-    
     @classmethod
     def smooth_Sound(self, recording, avaraging_window_in_number_of_samples):
         recording = list(map(abs, recording))
-        amplify = lambda datapoint: datapoint*100
-        recording = list(map(amplify, recording))
 
         smoothed_recording = []
         sample_count = len(recording)
@@ -247,3 +216,79 @@ class Data_Processor:
                 smoothed_recording.append(sum(list_of_values)/len(list_of_values))
             index += 1
         return smoothed_recording
+    
+    @classmethod
+    def process_General_Data_For_Heat_Map(self, file_location: str, frequency: int):
+        general_data = open(file_location, 'r').read()
+        general_data = json.loads(general_data)
+
+        x_positions_list = []
+        y_positions_list = []
+        reverberation_time_list = []
+        data = general_data["x_value"]
+        
+        for x_value in data:
+            
+            column = data[x_value]["y_value"]
+            for y_value in column:
+                reverberation_test = general_data["x_value"][x_value]["y_value"][y_value]
+                
+                if int(frequency) in reverberation_test["frequencies"]:
+                    frequency_key = str(frequency)
+                    
+                    time_of_reverberation = reverberation_test["graph_lines"][frequency_key]["vertical_lines"]["reverberation_time"]["x_value"]
+                    stop_frequency_time = reverberation_test["graph_lines"][frequency_key]["vertical_lines"]["stop_playing"]["x_value"]
+                    reverberation_time = round(((time_of_reverberation-stop_frequency_time)*6), 2)
+
+                    x_positions_list.append(float(x_value))
+                    y_positions_list.append(float(y_value))
+                    reverberation_time_list.append(float(reverberation_time))
+            
+        heat_map_dataframe = pd.DataFrame(
+            list(
+                zip(
+                    x_positions_list, 
+                    y_positions_list, 
+                    reverberation_time_list
+                    )
+                ), 
+            columns=["pos_x", "pos_y", "reverberation_time"]
+        )       
+        return heat_map_dataframe
+    
+    @classmethod
+    def apply_Calibration_to_recording_data(self, smoothed_recording):
+        calibration_data = pd.read_csv("data\calibration\calibration_data.csv").to_dict()
+        calibrated_data = []
+        for datapoint in smoothed_recording:
+            index = -1
+            for intensity_point in calibration_data['microphone_intensity'].values():
+                index += 1
+                if intensity_point > datapoint:
+                    upper_bound = intensity_point           
+                    if index == 0:
+                        lower_bound = 0
+                    elif index == len(calibration_data['microphone_intensity']) - 1:
+                        lower_bound = calibration_data['microphone_intensity'][index-1]
+                    else:
+                        lower_bound = calibration_data['microphone_intensity'][index-1]
+                        
+                    
+                    span =  upper_bound - lower_bound
+                    point = datapoint - lower_bound
+                    portion = point/span
+                    break
+            if index == 0:
+                upper_DB_bound = calibration_data['DB_level'][index]
+                DB_value = upper_DB_bound*portion
+            else:
+                lower_DB_bound = calibration_data['DB_level'][index-1]
+                upper_DB_bound = calibration_data['DB_level'][index]
+                DB_value = lower_DB_bound + (upper_DB_bound-lower_DB_bound)*portion
+            if DB_value > 100:
+                y = 3
+            calibrated_data.append(DB_value)
+
+        return calibrated_data
+
+
