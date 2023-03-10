@@ -61,7 +61,7 @@ class Reverberation_Test:
         existing_calibration_data.to_csv('./data/calibration/calibration_data.csv', sep=',', encoding='utf-8', index=False)
 
     @classmethod
-    def run_Sensor(self):
+    def run_Sensor(self, frequencies):
 
         audio_device_name  = Sensor_Controller.set_Audio_Devices()
         get_Min = lambda sound_sample: float(sound_sample[0])
@@ -72,7 +72,7 @@ class Reverberation_Test:
         record_sound_async.start()
         
         return_dict_playback = manager.dict()
-        play_sound_async = Process(target=Sensor_Controller.play_Sounds, args=([400,600,800,1000,1200,1400], return_dict_playback, audio_device_name['play_device_name']))
+        play_sound_async = Process(target=Sensor_Controller.play_Sounds, args=(frequencies, return_dict_playback, audio_device_name['play_device_name']))
         play_sound_async.start()
         play_sound_async.join()
         record_sound_async.join()
@@ -97,7 +97,8 @@ class Reverberation_Test:
     def run_Experiment(self):
         print('running experiment...:')
         print('\trunning sensor...')
-        return_dict_playback, return_dict_recorder = self.run_Sensor()
+        frequencies  = [400,600,800,1000,1200,1400]
+        return_dict_playback, return_dict_recorder = self.run_Sensor(frequencies)
         print('\tdone running sensor')
         
         
@@ -107,5 +108,5 @@ class Reverberation_Test:
 
 
         print('processing data...')
-        Data_Processor.data_Analysis(expirement_data)
+        Data_Processor.data_Analysis(expirement_data, frequencies)
         print('finished running experiment')
