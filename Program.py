@@ -1,17 +1,20 @@
-from Graphical_User_Interface import Graphical_User_Interface
 from Reverberation_Test import Reverberation_Test
 from Plot_Data import Plot_Data
-
+import json 
 class Program:
     
     @classmethod
     def startup(self, mode):
+        settingsfile = open('./appsettings.json', 'r')
+        settings = json.loads(settingsfile.read())
+        settingsfile.close()
+
         print('startup...')
         if mode == 'text':
-            self.start_Text_Based()
+            self.start_Text_Based(settings)
 
 
-    def start_Text_Based():
+    def start_Text_Based(self, settings):
         print('running ASCARS...')
 
         running = True
@@ -25,9 +28,9 @@ class Program:
                     run_or_view_calibration = input("invalid input enter either 'run' or 'view': ")
                 
                 if run_or_view_calibration == "run":
-                    Reverberation_Test.run_Calibration()
+                    Reverberation_Test.run_Calibration(settings)
                 if run_or_view_calibration == "view":
-                    Reverberation_Test.show_Calibration()
+                    Reverberation_Test.show_Calibration(settings)
             
             elif what_to_run == 'experiment': 
                 experiment_option = input("Do you want to run an experiment, view data or end the program?\nEnter 'run', 'view', 'heatmap', or 'stop: ")
@@ -39,7 +42,7 @@ class Program:
                         print('What position do you want to run an experiment on?')
                         x_position = str(input('Enter your x position: '))
                         y_position = str(input('Enter your y position: '))
-                        Plot_Data.graph_Experiment_Data(x_position, y_position)
+                        Plot_Data.graph_Experiment_Data(x_position, y_position, settings)
                 
                 if experiment_option ==  'run':
                     running_experiments = True
@@ -48,7 +51,7 @@ class Program:
                         print('what position do you want to run an experiment on?')
                         x_position = str(input('enter your x position: '))
                         y_position = str(input('enter your y position: '))
-                        Reverberation_Test.run_Experiment(x_position, y_position)
+                        Reverberation_Test.run_Experiment(x_position, y_position, settings)
                         
                         keep_running = input("do you want to run another test? 'yes' or 'no': ")
                         while not (keep_running in ['yes', 'no']):

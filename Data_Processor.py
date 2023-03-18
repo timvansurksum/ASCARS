@@ -4,12 +4,13 @@ import json
 class Data_Processor:
 
     @classmethod
-    def process_Calibration_Data(self, calibration_data, frequency):
+    def process_Calibration_Data(self, calibration_data, frequency, settings):
             get_Min = lambda sound_sample: float(sound_sample[0])
             recording = list(map(get_Min, calibration_data["recording"]))
-            recording = list(map(abs, recording))
-            smooth_recording = self.smooth_Sound(recording, 441)
-            intensity = self.get_Starting_intensity(smooth_recording, 1)
+            recording = list(map(abs, recording)) 
+
+            smooth_recording = self.smooth_Sound(recording, settings["sampling_rate"]*settings["smoothing_window"])
+            intensity = self.get_Starting_intensity(smooth_recording, 1, settings["sampling_rate"])
             DB_level = calibration_data['DB_level']
             calibration_data_point = pd.DataFrame({
                 'DB_level': [DB_level],
@@ -19,7 +20,7 @@ class Data_Processor:
             return calibration_data_point
 
     @classmethod
-    def data_Analysis(self, expirement_data, frequencies, x, y):
+    def data_Analysis(self, expirement_data, frequencies, x, y, settings):
         time_data = expirement_data['time_data']
         recording = expirement_data['recording']
         time_stamps = expirement_data['timestamps']
@@ -29,13 +30,12 @@ class Data_Processor:
             or time_data == [])
             and (len(recording) == len(time_data))
             ):
-
-            avaraging_window_in_number_of_samples = 441
+            avaraging_window_in_number_of_samples = settings["sampling_rate"]*settings["smoothing_window"]
             smoothed_recording = self.smooth_Sound(recording, avaraging_window_in_number_of_samples)
-            calibrated_recording = self.apply_Calibration_to_recording_data(smoothed_recording, start_and_stop_time_stamps)
-            graph_lines = self.get_lines(calibrated_recording, time_stamps, start_and_stop_time_stamps)
+            calibrated_recording = self.apply_Calibration_to_recording_data(smoothed_recording, start_and_stop_time_stamps, settings["sampling_rate"])
+            graph_lines = self.get_lines(calibrated_recording, time_stamps, start_and_stop_time_stamps, settings["sampling_rate"])
             
-            self.write_Experiment_Data_to_File(frequencies, graph_lines, calibrated_recording, time_data, x, y)
+            self.write_Experiment_Data_to_File(frequencies, graph_lines, calibrated_recording, time_data, x, y, settings)
             return True
             
         else:
@@ -43,10 +43,9 @@ class Data_Processor:
             return False
     
     @classmethod
-    
-    def write_Experiment_Data_to_File(self, frequencies, graph_lines, smoothed_recording, time_data, x, y):
+    def write_Experiment_Data_to_File(self, frequencies, graph_lines, smoothed_recording, time_data, x, y, settings):
         
-        existing_general_data = open('./data/reverberation_data/general_data.json', 'r').read()
+        existing_general_data = open(settings["data_storage_path"] + 'data/reverberation_data/general_data.json', 'r').read()
 
         try:
             general_data = json.loads(existing_general_data)
@@ -65,17 +64,17 @@ class Data_Processor:
             "frequencies": frequencies,
             "graph_lines": graph_lines
         }
-        general_data_with_experiment_run = open('./data/reverberation_data/general_data.json', 'w')
+        general_data_with_experiment_run = open(settings["data_storage_path"] + 'data/reverberation_data/general_data.json', 'w')
         general_data_with_experiment_run.write(json.dumps(general_data, indent='\t'))
         general_data_with_experiment_run.close()
         recording_data = pd.DataFrame({
             "recording": smoothed_recording,
             "time_data": time_data
         })
-        recording_data.to_csv(f"./data/reverberation_data/recordings/{x}_{y}.csv", ',', index=False)
+        recording_data.to_csv(settings["data_storage_path"] + f"data/reverberation_data/recordings/{x}_{y}.csv", ',', index=False)
 
     @classmethod
-    def get_lines(self, smoothed_recording, time_stamps, start_and_stop_time_stamps):
+    def get_lines(self, smoothed_recording, time_stamps, start_and_stop_time_stamps, sample_rate):
         lines = {}
 
         for frequency in start_and_stop_time_stamps.keys():
@@ -95,8 +94,8 @@ class Data_Processor:
                     start_playing_frequency_time = timestamp['time']
                 if timestamp['time_name'] == f'stop_frequency_{frequency}':
                     stop_playing_frequency_time = timestamp['time']
-            starting_intensity  = self.get_Starting_intensity(smoothed_recording, stop_playing_frequency_time)
-            reverberation_time = self.get_Reverberation_Time(smoothed_recording, starting_intensity, stop_playing_frequency_time)
+            starting_intensity  = self.get_Starting_intensity(smoothed_recording, stop_playing_frequency_time, sample_rate)
+            reverberation_time = self.get_Reverberation_Time(smoothed_recording, starting_intensity, stop_playing_frequency_time, sample_rate)
             
             lines_by_frequency['vertical_lines']['reverberation_time'] = {
                 'x_value': reverberation_time,
@@ -142,24 +141,22 @@ class Data_Processor:
         return lines
 
     @classmethod
-    def get_Reverberation_Time(self, smooth_recording, starting_intensity, stop_playing_frequency_time):
-        sampling_rate = 44100
-        start_point = int(stop_playing_frequency_time*sampling_rate)
-        stop_point = int(start_point+2*sampling_rate)
+    def get_Reverberation_Time(self, smooth_recording, starting_intensity, stop_playing_frequency_time, sample_rate):
+        start_point = int(stop_playing_frequency_time*sample_rate)
+        stop_point = int(start_point+2*sample_rate)
         time_id = 0
         for point in smooth_recording[start_point:stop_point]:
             if point < starting_intensity - 10:
                 break
             else:
                 time_id += 1
-        reveberation_time = stop_playing_frequency_time + time_id/sampling_rate
+        reveberation_time = stop_playing_frequency_time + time_id/sample_rate
         return reveberation_time
     
     @classmethod
-    def get_Starting_intensity(self, smoothed_recording, stop_frequency_time):
-        sampling_rate = 44100
-        starting_intensity_value = int((stop_frequency_time)*sampling_rate)-1*sampling_rate
-        last_intensity_value = int(stop_frequency_time*sampling_rate)
+    def get_Starting_intensity(self, smoothed_recording, stop_frequency_time, sample_rate):
+        starting_intensity_value = int((stop_frequency_time)*sample_rate)-1*sample_rate
+        last_intensity_value = int(stop_frequency_time*sample_rate)
         values_to_get_avarage_over = smoothed_recording[starting_intensity_value:last_intensity_value]
         starting_intensity = sum(values_to_get_avarage_over)/len(values_to_get_avarage_over)
         return starting_intensity
@@ -257,13 +254,14 @@ class Data_Processor:
         return heat_map_dataframe
     
     @classmethod
-    def apply_Calibration_to_recording_data(self, smoothed_recording: list, start_and_stop_time_stamps: dict):
+    def apply_Calibration_to_recording_data(self, smoothed_recording: list, start_and_stop_time_stamps: dict, sample_rate: int):
         calibration_data = pd.read_csv("data\calibration\calibration_data.csv").to_dict()
         calibrated_data = []
         start_time = 0
         for start_and_stop_time_stamp in start_and_stop_time_stamps.keys():
             stop_time = start_and_stop_time_stamps[start_and_stop_time_stamp]["stop_frequency_time"]
-            for datapoint in smoothed_recording[int(start_time*44100):int(stop_time*44100)]:
+            #get sampling rate from appsettings
+            for datapoint in smoothed_recording[int(start_time*sample_rate):int(stop_time*sample_rate)]:
                 index = -1
                 for intensity_point in calibration_data['microphone_intensity'].values():
                     index += 1

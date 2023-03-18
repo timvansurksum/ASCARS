@@ -7,9 +7,9 @@ import seaborn as sns
 class Plot_Data:
     
     @classmethod
-    def graph_Experiment_Data(self, x: str, y: str):
-        sampling_rate = 44100
-        general_data = json.loads(open("./data/reverberation_data/general_data.json", 'r').read())
+    def graph_Experiment_Data(self, x: str, y: str, settings: dict):
+        sample_rate = settings["sampling_rate"]
+        general_data = json.loads(open(settings["data_storage_path"] + "data/reverberation_data/general_data.json", 'r').read())
         experiment_general_data = general_data["x_value"][x]["y_value"][y]
         
         frequency_to_graph_id = {}
@@ -36,8 +36,8 @@ class Plot_Data:
             graph_id = frequency_to_graph_id[frequency]
             frequency_general_data = experiment_general_data['graph_lines'][str(frequency)]
             
-            start_time = int(frequency_general_data["start_time"] * sampling_rate)
-            stop_time = int(frequency_general_data["stop_time"] * sampling_rate)
+            start_time = int(frequency_general_data["start_time"] * sample_rate)
+            stop_time = int(frequency_general_data["stop_time"] * sample_rate)
             
             vertical_lines = frequency_general_data["vertical_lines"]
             horizontal_lines = frequency_general_data["horizontal_lines"]

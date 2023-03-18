@@ -21,11 +21,10 @@ class Sensor_Controller:
 
 
     @classmethod
-    def play_and_record_Calibration_Sound(self, audio_device_name, frequency):
+    def play_and_record_Calibration_Sound(self, audio_device_name, frequency, sample_rate):
         sd.default.device = audio_device_name['play_device_name']
         sinewave = SineWave()
         sinewave.set_frequency(frequency=frequency)
-        fs = 44100
         sinewave.play()
 
         DB_level = input('please adjust the speaker level for a target db level and enter the db level here: ')
@@ -38,7 +37,7 @@ class Sensor_Controller:
                 DB_level = input('incorrect value has to be a number please re-enter the db level here: ')
         time.sleep(0.2)
         sd.default.device = audio_device_name['record_device_name']
-        recording = sd.rec(1000,samplerate=fs, channels=1, dtype='float64')
+        recording = sd.rec(1000,samplerate=sample_rate, channels=1, dtype='float64')
         print('recording tone...')
         sd.wait()
         sinewave.stop()
@@ -79,10 +78,9 @@ class Sensor_Controller:
                 }
 
     @classmethod
-    def record(self, duration, return_dict_recorder, audio_device_name):
+    def record(self, duration, return_dict_recorder, audio_device_name, sample_rate):
         sd.default.device = audio_device_name
-        fs = 44100
-        recording = sd.rec(duration * fs, samplerate=fs, channels=1, dtype='float64')
+        recording = sd.rec(duration * sample_rate, samplerate=sample_rate, channels=1, dtype='float64')
         return_dict_recorder['start_recording'] =  time.time()
         sd.wait()
         return_dict_recorder['end_recording'] =  time.time()
