@@ -4,14 +4,27 @@ import json
 class Data_Processor:
 
     @classmethod
-    def process_Calibration_Data(self, calibration_data, frequency, settings):
+    def process_Calibration_Data(self, calibration_data: dict, frequency: int, settings: dict):
+            """
+            Function to process the data given by the calibration recording,
+            and turn it into a intensity to BD value mapping
+
+            calibration_data: dict, object which holds all the data of the calibration, the recording,
+                and marked Db level
+            frequency: int, the frequency being calibrated
+            settings: dict, appsettings to be used in function
+            """
+            # gets the lowest value of every sample in case multiple channels were used for recording
             get_Min = lambda sound_sample: float(sound_sample[0])
             recording = list(map(get_Min, calibration_data["recording"]))
             recording = list(map(abs, recording)) 
 
+            # smooths the recording and extracts the intensity of it 
             smooth_recording = self.smooth_Sound(recording, settings["sampling_rate"]*settings["smoothing_window"])
             intensity = self.get_Starting_intensity(smooth_recording, 1, settings["sampling_rate"])
             DB_level = calibration_data['DB_level']
+
+            # packages data into neat package and returns it
             calibration_data_point = pd.DataFrame({
                 'DB_level': [DB_level],
                 'frequency': [frequency],
@@ -20,21 +33,38 @@ class Data_Processor:
             return calibration_data_point
 
     @classmethod
-    def data_Analysis(self, expirement_data, frequencies, x, y, settings):
+    def data_Analysis(self, expirement_data: dict, frequencies: list, x: float, y: float, settings: dict):
+        """
+        Analyses the data obtained through an experiment.
+
+        expirement_data: dict, all experiment obtained data
+        frequencies: list, run frequenties in experiment
+        x: float, x position of the setup
+        y: float, y position of the setup
+        settings: dict, appsettings for setup values
+        """
+
+        # extracts data from experiment data to be used
         time_data = expirement_data['time_data']
         recording = expirement_data['recording']
         time_stamps = expirement_data['timestamps']
+        
+        # extracts start and stop playing times from the time stamps 
         start_and_stop_time_stamps = self.get_Timestamps_For_Each_Frequency(time_stamps, frequencies)
+
+        # checks if there is any valid data to be processed
         if (
             not (recording == [] 
             or time_data == [])
             and (len(recording) == len(time_data))
             ):
             avaraging_window_in_number_of_samples = settings["sampling_rate"]*settings["smoothing_window"]
+            # processes the data into usable metrics such as reverberation time and starting intensity in DB
             smoothed_recording = self.smooth_Sound(recording, avaraging_window_in_number_of_samples)
             calibrated_recording = self.apply_Calibration_to_recording_data(smoothed_recording, start_and_stop_time_stamps, settings["sampling_rate"])
             graph_lines = self.get_lines(calibrated_recording, time_stamps, start_and_stop_time_stamps, settings["sampling_rate"])
             
+            # writes the experiment data to file
             self.write_Experiment_Data_to_File(frequencies, graph_lines, calibrated_recording, time_data, x, y, settings)
             return True
             
@@ -43,10 +73,23 @@ class Data_Processor:
             return False
     
     @classmethod
-    def write_Experiment_Data_to_File(self, frequencies, graph_lines, smoothed_recording, time_data, x, y, settings):
-        
+    def write_Experiment_Data_to_File(self, frequencies: list, graph_lines: dict, smoothed_recording: list, time_data: list, x: float, y: float, settings: dict):
+        """
+        Writes experiment data to file one file for the recording and one for the general graph data
+
+        frequencies: list, frequenties played in the experiment
+        graph_lines: dict, important points in the data
+        smoothed_recording: list, processed recording data
+        time_data: list, time point corresponding to a sample point in the recording
+        x: float, x position of the setup
+        y: float, y position of the setup
+        settings: dict, appsettings for setup values
+        """
+        # opens existing data file
         existing_general_data = open(settings["data_storage_path"] + 'data/reverberation_data/general_data.json', 'r').read()
 
+        # gets data from data file if it exists
+        # if not it builds the fields themselfs to be ready to add data to
         try:
             general_data = json.loads(existing_general_data)
         except:
@@ -59,6 +102,7 @@ class Data_Processor:
         if not 'y_value' in general_data["x_value"][str(x)]:
             general_data["x_value"][str(x)] = {'y_value': {}}
         
+        # adds data point to general data and stores the new version
         general_data["x_value"][str(x)]['y_value'][str(y)] = {
             "recording_file_name": f"{x}_{y}.csv",
             "frequencies": frequencies,
@@ -67,6 +111,8 @@ class Data_Processor:
         general_data_with_experiment_run = open(settings["data_storage_path"] + 'data/reverberation_data/general_data.json', 'w')
         general_data_with_experiment_run.write(json.dumps(general_data, indent='\t'))
         general_data_with_experiment_run.close()
+        
+        # writes recording to sepperate data file
         recording_data = pd.DataFrame({
             "recording": smoothed_recording,
             "time_data": time_data
@@ -74,10 +120,20 @@ class Data_Processor:
         recording_data.to_csv(settings["data_storage_path"] + f"data/reverberation_data/recordings/{x}_{y}.csv", ',', index=False)
 
     @classmethod
-    def get_lines(self, smoothed_recording, time_stamps, start_and_stop_time_stamps, sample_rate):
+    def get_lines(self, smoothed_recording: list, time_stamps: list, start_and_stop_time_stamps: dict, sample_rate: int):
+        """
+        Gets important datapoints from the recording given playback timestamps for each frequency
+
+        smoothed_recording: list, processed recording
+        time_stamps: list, time axis of the recording
+        start_and_stop_time_stamps: dict, time stamps for starting to record and stopping to record
+        sample_rate: int, sample rate of the microphone
+        """
         lines = {}
 
+        # goes over each frequentie to find important data points and translates those to labeled vertical or horizontal lines
         for frequency in start_and_stop_time_stamps.keys():
+            # builds json object to store data points
             start_and_stop_time_stamp = start_and_stop_time_stamps[frequency]
             lines_by_frequency = {
                 'start_time': start_and_stop_time_stamp['start_frequency_time'],
@@ -86,7 +142,7 @@ class Data_Processor:
                 'horizontal_lines': {}
             }
 
-
+            # marks start and stop time for each frequency
             start_playing_frequency_time = int
             stop_playing_frequency_time  = int
             for timestamp in time_stamps:
@@ -94,9 +150,12 @@ class Data_Processor:
                     start_playing_frequency_time = timestamp['time']
                 if timestamp['time_name'] == f'stop_frequency_{frequency}':
                     stop_playing_frequency_time = timestamp['time']
+
+            # finds the reverberation time
             starting_intensity  = self.get_Starting_intensity(smoothed_recording, stop_playing_frequency_time, sample_rate)
             reverberation_time = self.get_Reverberation_Time(smoothed_recording, starting_intensity, stop_playing_frequency_time, sample_rate)
             
+            # marks all important lines and adds labels with coordinates for the label
             lines_by_frequency['vertical_lines']['reverberation_time'] = {
                 'x_value': reverberation_time,
                 'y_upper_bound' : starting_intensity,
@@ -141,10 +200,20 @@ class Data_Processor:
         return lines
 
     @classmethod
-    def get_Reverberation_Time(self, smooth_recording, starting_intensity, stop_playing_frequency_time, sample_rate):
+    def get_Reverberation_Time(self, smooth_recording: list, starting_intensity: float, stop_playing_frequency_time: float, sample_rate: int):
+        """
+        Gets the reverberation time of a recording given a certain starting intensity and stop playing frequency time
+
+        smooth_recording: list, processed recording from experiment
+        starting_intensity: float, starting intensity of tone
+        stop_playing_frequency_time: float, time the frequency stopped playing
+        sample_rate: int, sample rate of the microphone
+        """
+
         start_point = int(stop_playing_frequency_time*sample_rate)
         stop_point = int(start_point+2*sample_rate)
         time_id = 0
+        # checks for each point whether it is below the reverberation intensity
         for point in smooth_recording[start_point:stop_point]:
             if point < starting_intensity - 10:
                 break
@@ -154,7 +223,14 @@ class Data_Processor:
         return reveberation_time
     
     @classmethod
-    def get_Starting_intensity(self, smoothed_recording, stop_frequency_time, sample_rate):
+    def get_Starting_intensity(self, smoothed_recording: list , stop_frequency_time: float, sample_rate: int):
+        """
+        Gets the avarage intensity of a second before a given time in a recording.
+
+        smooth_recording: list, processed recording from experiment
+        stop_playing_frequency_time: float, time the frequency stopped playing
+        sample_rate: int, sample rate of the microphone
+        """
         starting_intensity_value = int((stop_frequency_time)*sample_rate)-1*sample_rate
         last_intensity_value = int(stop_frequency_time*sample_rate)
         values_to_get_avarage_over = smoothed_recording[starting_intensity_value:last_intensity_value]
@@ -162,9 +238,16 @@ class Data_Processor:
         return starting_intensity
 
     @classmethod
-    def get_Timestamps_For_Each_Frequency(self, timestamps, frequencies):
-        
+    def get_Timestamps_For_Each_Frequency(self, timestamps: list, frequencies: list):
+        """
+            gets the start and stop times of each frequentie in a given recording 
+            and neatly stores them in a dictionairy
+            
+            timestamps: list, list of timestamps for a recording
+            frequencies: list, list of played frequenties
+        """
         start_and_stop_time_stamps = {}
+        # goes over each frequency
         for frequency in frequencies:
             start_frequency_time = int
             stop_frequency_time = int
@@ -172,6 +255,8 @@ class Data_Processor:
             got_start_time = False
             got_stop_time = False
 
+            # goes over each timestamp to find the right one for the start and stop
+            # of each frequency and stores it in a variable to be returned
             for timestamp in timestamps:
                 if not got_start_time or not got_stop_time:
                     time_name  = timestamp['time_name']
