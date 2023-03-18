@@ -11,6 +11,12 @@ class Sensor_Controller:
 
     @classmethod
     def play_Frequency(self, frequency: int, audio_device_name: str, play_time: int):
+        """
+        Function that plays a given frequency for a set amound of time
+        frequency: int, frequentie that is going to be played
+        audio_device_name: str, name of the playback device
+        play_time: int, time in seconds to play the frequency
+        """
         # sets audio device
         sd.default.device = audio_device_name
         
@@ -23,8 +29,14 @@ class Sensor_Controller:
 
 
     @classmethod
-    def play_and_record_Calibration_Sound(self, audio_device_name: str, frequency: int, sample_rate: int):
-        
+    def play_and_record_Calibration_Sound(self, audio_device_name: dict, frequency: int, sample_rate: int):
+        """
+        Function that both records and plays sound to calibrate your microphone.
+        This function will automaticly ask questions in the console to get the necessairy callibration data.
+        audio_device_name: dict, name of the audio devices
+        frequency: int, frequency of the tone being calibrated
+        sample_rate: int, sample rate of the microphone
+        """
         # sets audio device
         sd.default.device = audio_device_name['play_device_name']
         
@@ -61,6 +73,9 @@ class Sensor_Controller:
 
     @classmethod
     def set_Audio_Devices(self):
+        """
+        Function that asks users via the console which audio devices to use
+        """
         
         # builds a list of recording & playback devices
         record_device_names  = []
@@ -96,6 +111,13 @@ class Sensor_Controller:
 
     @classmethod
     def record(self, duration: int, return_dict_recorder: dict, audio_device_name: str, sample_rate: int):
+        """
+        records for a given period of time and marks when it starts and stops recording
+        duration: int, how long it records
+        return_dict_recorder: dict, an object that stores data to be able to run this function in parallel
+        audio_device_name: str, name of the audio device used to record
+        sample_rate: int, sample rate the recorder records with
+        """
         # sets recording device
         sd.default.device = audio_device_name
         
@@ -111,6 +133,12 @@ class Sensor_Controller:
 
     @classmethod
     def play_Sounds(self, frequenties: list, return_dict_playback: dict, audio_device_name: str):
+        """ 
+        plays a list of frequenties
+        frequenties: list, list of frequenties to be played
+        return_dict_playback: dict, an object that stores data to be able to run this function in parallel
+        audio_device_name: str, name of the playback device
+        """ 
         # sets playback device
         sd.default.device = audio_device_name
         return_dict_playback['start_playback'] =  time.time()
