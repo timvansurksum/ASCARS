@@ -9,7 +9,7 @@ class Data_Processor:
             recording = list(map(get_Min, calibration_data["recording"]))
             recording = list(map(abs, recording))
             smooth_recording = self.smooth_Sound(recording, 441)
-            intensity = self.get_Starting_intensity(smooth_recording, 0, 1)
+            intensity = self.get_Starting_intensity(smooth_recording, 1)
             DB_level = calibration_data['DB_level']
             calibration_data_point = pd.DataFrame({
                 'DB_level': [DB_level],

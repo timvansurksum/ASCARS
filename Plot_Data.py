@@ -107,11 +107,15 @@ class Plot_Data:
                 
                 microphone_intensity_values = list(kalibration_data_dictionairy['microphone_intensity'].values())
                 DB_level_values = list(kalibration_data_dictionairy['DB_level'].values())
+                title = f'{str(frequency)}hz'
                 
-                axs[frequency_id].plot(microphone_intensity_values, DB_level_values)
-                axs[frequency_id].set_title(f'kalibration graph of {str(frequency)}hz frequency')
+                axs[frequency_id].plot(
+                    microphone_intensity_values, DB_level_values)
+                axs[frequency_id].set_title(title)
                 axs[frequency_id].set_xlabel('intensity_values')
                 axs[frequency_id].set_ylabel('DB_values')
+                
+
         plt.show()
     
         
