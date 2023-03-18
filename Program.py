@@ -13,7 +13,7 @@ class Program:
         if mode == 'text':
             self.start_Text_Based(settings)
 
-
+    @classmethod
     def start_Text_Based(self, settings):
         print('running ASCARS...')
 

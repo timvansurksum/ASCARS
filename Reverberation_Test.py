@@ -43,7 +43,7 @@ class Reverberation_Test:
             print(f'starting playing sound with frequency {str(frequency)}')
             calibration_data = Sensor_Controller.play_and_record_Calibration_Sound(audio_device_names, frequency, settings["sampling_rate"])
             print('processing data...')
-            calibration_data_point = Data_Processor.process_Calibration_Data(calibration_data, frequency, settings["sampling_rate"])
+            calibration_data_point = Data_Processor.process_Calibration_Data(calibration_data, frequency, settings)
             
             existing_calibration_data = pd.concat([existing_calibration_data, calibration_data_point])
 
