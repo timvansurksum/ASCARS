@@ -275,12 +275,23 @@ class Data_Processor:
         return start_and_stop_time_stamps
 
     @classmethod
-    def smooth_Sound(self, recording, avaraging_window_in_number_of_samples):
+    def smooth_Sound(self, recording: list, avaraging_window_in_number_of_samples: int):
+        """
+        Applies a convolution like transformation to turn audio signal into something that may be interpreted 
+        as an intensity of some kind.
+
+        recording: list, recording data
+        avaraging_window_in_number_of_samples: int, window over which to apply the 'convolution'
+        """
+        # gets the absolute value of the signal
         recording = list(map(abs, recording))
+
 
         smoothed_recording = []
         sample_count = len(recording)
         index = 0
+        # applies the averaging window over each sample in the recording
+        # taking into account the edges where the point is closer than the window
         for _ in recording:
             if index < avaraging_window_in_number_of_samples:
                 list_of_values = recording[0:avaraging_window_in_number_of_samples+1]
@@ -301,6 +312,13 @@ class Data_Processor:
     
     @classmethod
     def process_General_Data_For_Heat_Map(self, file_location: str, frequency: int):
+        """
+        Gets the general data containing al the information on a certain tested space 
+        and processes it into data that can be used for a heatmap.
+
+        file_location: str, the file location of the general heatmap and graphing data
+        frequency: int, the frequency you want to get the heatmap data of
+        """
         general_data = open(file_location, 'r').read()
         general_data = json.loads(general_data)
 
@@ -308,7 +326,7 @@ class Data_Processor:
         y_positions_list = []
         reverberation_time_list = []
         data = general_data["x_value"]
-        
+        # goes over each data point to get their position and reverberation time
         for x_value in data:
             
             column = data[x_value]["y_value"]
@@ -317,7 +335,7 @@ class Data_Processor:
                 
                 if int(frequency) in reverberation_test["frequencies"]:
                     frequency_key = str(frequency)
-                    
+                    # calculates the reverberation time and adds the point to the data field to be read out for the heatmap
                     time_of_reverberation = reverberation_test["graph_lines"][frequency_key]["vertical_lines"]["reverberation_time"]["x_value"]
                     stop_frequency_time = reverberation_test["graph_lines"][frequency_key]["vertical_lines"]["stop_playing"]["x_value"]
                     reverberation_time = round(((time_of_reverberation-stop_frequency_time)*6), 2)
@@ -325,7 +343,7 @@ class Data_Processor:
                     x_positions_list.append(float(x_value))
                     y_positions_list.append(float(y_value))
                     reverberation_time_list.append(float(reverberation_time))
-            
+        # sets up the dataframe for the heatmap    
         heat_map_dataframe = pd.DataFrame(
             list(
                 zip(
@@ -340,14 +358,22 @@ class Data_Processor:
     
     @classmethod
     def apply_Calibration_to_recording_data(self, smoothed_recording: list, start_and_stop_time_stamps: dict, sample_rate: int):
+        """
+        Applies the calibration of the frequenties to the recording after it has been turned into intensity data.
+
+        smoothed_recording: list, the recording after having been turned into an arbritairy intensity graph
+        start_and_stop_time_stamps: dict, timestamps when each frequency started and stopped playing
+        sample_rate: int, the samplerate of the recording
+        """
         calibration_data = pd.read_csv("data\calibration\calibration_data.csv").to_dict()
         calibrated_data = []
         start_time = 0
+        # goes over each time stamp to find where in the recording to find each frequenties run
         for start_and_stop_time_stamp in start_and_stop_time_stamps.keys():
             stop_time = start_and_stop_time_stamps[start_and_stop_time_stamp]["stop_frequency_time"]
-            #get sampling rate from appsettings
             for datapoint in smoothed_recording[int(start_time*sample_rate):int(stop_time*sample_rate)]:
                 index = -1
+                # goes over each point in the calibration to get the correct point and aplies it to the intensity of the sample
                 for intensity_point in calibration_data['microphone_intensity'].values():
                     index += 1
                     if intensity_point > datapoint:
@@ -364,6 +390,7 @@ class Data_Processor:
                         point = datapoint - lower_bound
                         portion = point/span
                         break
+                # deals with situations where the intesity of a given sample is beyond the calibration
                 if index == 0:
                     upper_DB_bound = calibration_data['DB_level'][index]
                     DB_value = upper_DB_bound*portion
@@ -373,6 +400,7 @@ class Data_Processor:
                     DB_value = lower_DB_bound + (upper_DB_bound-lower_DB_bound)*portion
                 if DB_value > 100:
                     y = 3
+                # ads the calibrated point to a seperate list for the calibrated recording
                 calibrated_data.append(DB_value)
             start_time = start_and_stop_time_stamps[start_and_stop_time_stamp]["stop_frequency_time"]
 
