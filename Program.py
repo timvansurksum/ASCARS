@@ -4,21 +4,36 @@ import json
 class Program:
     
     @classmethod
-    def startup(self, mode):
+    def startup(self, mode: str):
+        """
+        starts the ascars program with the given mode
+
+        mode: str, gives the way you want the program to run text based or graphic
+
+        """
+        # gets the global settingsfile
         settingsfile = open('./appsettings.json', 'r')
         settings = json.loads(settingsfile.read())
         settingsfile.close()
 
+        # starts ascars with given mode currently only supports text based
         print('startup...')
         if mode == 'text':
             self.start_Text_Based(settings)
 
     @classmethod
-    def start_Text_Based(self, settings):
+    def start_Text_Based(self, settings: dict):
+        """
+        runs ascars in text based mode
+
+        settings: dict, holds al the settings from appsettings.json as a dictionairy
+        """
         print('running ASCARS...')
+
 
         running = True
         while running:
+            # asks user questions to navigate actions in ascars
             what_to_run = input("what do you want to run?.. 'calibration', 'experiment' or 'end' to end the program?: ")
             while not (what_to_run in ['calibration', 'experiment', 'end']):
                 what_to_run = input("please enter a valid option your options are: 'calibration', 'experiment' 'end': ")
