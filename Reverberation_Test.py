@@ -11,16 +11,29 @@ import pandas as pd
 class Reverberation_Test:
     
     @classmethod
-    def show_Calibration(self, settings):
+    def show_Calibration(self, settings: dict):
+        """
+        gathers the calibration data and shows it with matplotlib
+
+        settings: dict, global settings
+        """
         kalibration_data = pd.read_csv('./data/calibration/calibration_data.csv')
         print('showing calibration graphs...')
         Plot_Data.graph_Kalibration(kalibration_data)
 
     @classmethod
-    def run_Calibration(self, settings):
-        existing_calibration_data = pd.read_csv('./data/calibration/calibration_data.csv')
+    def run_Calibration(self, settings: dict):
+        """
+        With use of the console and user gets a intensity and given db value to calibrate the sensor
+
+        settings: dict, global appsettings        
+        """
+
+        # reads out the current calibration data
+        existing_calibration_data = pd.read_csv(settings["data_storage_path"] + 'data/calibration/calibration_data.csv')
         done_running_this_frequency = False
         while not done_running_this_frequency:
+            # sets the audio device and asks for a db level that matches the tone being generated
             audio_device_names = Sensor_Controller.set_Audio_Devices()
             frequency = input("what frequency do you want to calibrate?: ")
             valid_frequency = False
@@ -46,6 +59,7 @@ class Reverberation_Test:
             
             existing_calibration_data = pd.concat([existing_calibration_data, calibration_data_point])
 
+            # checks if you want to calibrate another intensity
             new_DB_test = input("do you want to test another DB level? 'yes' or 'no'? ")
             while not new_DB_test in ['yes', 'no']:
                     new_DB_test = input("invalid input please enter a valid input either 'yes' or 'no'? ")
@@ -55,37 +69,55 @@ class Reverberation_Test:
             elif new_DB_test == 'no':
                 done_running_this_frequency = True
 
+        # writes new data to file together with existing calibration data
         existing_calibration_data.to_csv('./data/calibration/calibration_data.csv', sep=',', encoding='utf-8', index=False)
 
     @classmethod
-    def run_Sensor(self, frequencies, sample_rate):
+    def run_Sensor(self, frequencies: list, sample_rate: int):
+        """
+        Runs the sensor to both record and play sound for the experiment.
+
+        frequencies: list, list of frequeies to run in the experiment 
+        sample_rate: int, the sample rate of the recording
+        """
 
         audio_device_name  = Sensor_Controller.set_Audio_Devices()
-        get_Min = lambda sound_sample: float(sound_sample[0])
 
+        # builds variables to store data from different processes
         manager = multiprocessing.Manager()
         return_dict_recorder = manager.dict()
-        recording_time = len(frequencies) * 5 + 5
+        return_dict_playback = manager.dict()
 
+        # sets up parallel functions to run recording and playback at the same time
+        recording_time = len(frequencies) * 5 + 5
         record_sound_async = Process(target=Sensor_Controller.record, args=(recording_time, return_dict_recorder, audio_device_name['record_device_name'], sample_rate))
         record_sound_async.start()
         
-        return_dict_playback = manager.dict()
         play_sound_async = Process(target=Sensor_Controller.play_Sounds, args=(frequencies, return_dict_playback, audio_device_name['play_device_name']))
         play_sound_async.start()
         
         play_sound_async.join()
         record_sound_async.join()
         
+
+        # turns each sample into 1 value to account for recorders with mutiple channels
+        get_Min = lambda sound_sample: float(sound_sample[0])
         return_dict_recorder['recording'] = list(map(get_Min, return_dict_recorder['recording']))
         return return_dict_playback, return_dict_recorder
     
     @classmethod
-    def format_Sensor_Data(self, return_dict_playback, return_dict_recorder, settings):
+    def format_Sensor_Data(self, return_dict_playback: dict, return_dict_recorder: dict, settings: dict):
+        """
+
+        return_dict_playback: dict, timestamps from the playback of an experiment
+        return_dict_recorder: dict, data returned from the recorder of an experiment
+        settings: dict, global settings
+        """
+
         playtime = 5 * len(settings["frequenties"]) + 5
         time_data = np.linspace(0, playtime, playtime*settings["sampling_rate"])
         
-
+        # maps all the timestamps to be relative to the start time
         get_time_relative_from_start = lambda time, time_name: {'time_name': time_name,'time': time-return_dict_recorder['start_recording']}
         time_stamps = list(map(get_time_relative_from_start, return_dict_playback.values(), return_dict_playback.keys()))
 
@@ -95,7 +127,14 @@ class Reverberation_Test:
         return expirement_data
     
     @classmethod
-    def run_Experiment(self, x, y, settings):
+    def run_Experiment(self, x: float, y: float, settings: dict):
+        """
+        Manages an experiment and keeps user up to date with console
+
+        x: float, x position of the setup
+        y: float, y position of the setup
+        settings: dict, global settings
+        """
         print('running experiment...:')
         print('\trunning sensor...')
         frequencies  = settings["frequenties"]
