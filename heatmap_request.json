@@ -2,32 +2,53 @@
   {
     "x_positie": 1,
     "y_positie": 1,
-    "reverberation_time": 0.1
-  },
-  {
-    "x_positie": 2,
-    "y_positie": 1,
-    "reverberation_time": 0.1
-  },
-  {
-    "x_positie": 3,
-    "y_positie": 1,
-    "reverberation_time": 0.1
-  },
-  {
-    "x_positie": 2,
-    "y_positie": 1,
-    "reverberation_time": 0.1
+    "frequenties": {
+      "400": {
+        "reverberation_time": 0.1,
+        "graph_image_location": "C:\\Users\targa\\Desktop\\math and physics\\hva technische natuurkunde\\project\\leerjaar 1\\p3\\code\\ASCARS\\data\\reverberation_data\\graph_images\\1_1_400_hz.jpg"
+      }, 
+      "600": {
+        "reverberation_time": 0.2,
+        "graph_image_location": "C:\\Users\targa\\Desktop\\math and physics\\hva technische natuurkunde\\project\\leerjaar 1\\p3\\code\\ASCARS\\data\\reverberation_data\\graph_images\\1_1_600_hz.jpg"
+      }, 
+      "800":{
+        "reverberation_time": 0.2,
+        "graph_image_location": "C:\\Users\targa\\Desktop\\math and physics\\hva technische natuurkunde\\project\\leerjaar 1\\p3\\code\\ASCARS\\data\\reverberation_data\\graph_images\\1_1_800_hz.jpg"
+      }, 
+      "1000": {
+        "reverberation_time": 0.3,
+        "graph_image_location": "C:\\Users\targa\\Desktop\\math and physics\\hva technische natuurkunde\\project\\leerjaar 1\\p3\\code\\ASCARS\\data\\reverberation_data\\graph_images\\1_1_1000_hz.jpg"
+      }, 
+      "1200": {
+        "reverberation_time": 0.4,
+        "graph_image_location": "C:\\Users\targa\\Desktop\\math and physics\\hva technische natuurkunde\\project\\leerjaar 1\\p3\\code\\ASCARS\\data\\reverberation_data\\graph_images\\1_1_1200_hz.jpg"
+      }
+    }
   },
   {
     "x_positie": 1,
     "y_positie": 2,
-    "reverberation_time": 0.1
-  },
-  {
-    "x_positie": 1,
-    "y_positie": 3,
-    "reverberation_time": 0.1
+    "frequenties": {
+      "400": {
+        "reverberation_time": 0.1,
+        "graph_image_location": "C:\\Users\targa\\Desktop\\math and physics\\hva technische natuurkunde\\project\\leerjaar 1\\p3\\code\\ASCARS\\data\\reverberation_data\\graph_images\\1_2_400_hz.jpg"
+      }, 
+      "600": {
+        "reverberation_time": 0.2,
+        "graph_image_location": "C:\\Users\targa\\Desktop\\math and physics\\hva technische natuurkunde\\project\\leerjaar 1\\p3\\code\\ASCARS\\data\\reverberation_data\\graph_images\\1_2_600_hz.jpg"
+      }, 
+      "800":{
+        "reverberation_time": 0.2,
+        "graph_image_location": "C:\\Users\targa\\Desktop\\math and physics\\hva technische natuurkunde\\project\\leerjaar 1\\p3\\code\\ASCARS\\data\\reverberation_data\\graph_images\\1_2_800_hz.jpg"
+      }, 
+      "1000": {
+        "reverberation_time": 0.3,
+        "graph_image_location": "C:\\Users\targa\\Desktop\\math and physics\\hva technische natuurkunde\\project\\leerjaar 1\\p3\\code\\ASCARS\\data\\reverberation_data\\graph_images\\1_2_1000_hz.jpg"
+      }, 
+      "1200": {
+        "reverberation_time": 0.4,
+        "graph_image_location": "C:\\Users\targa\\Desktop\\math and physics\\hva technische natuurkunde\\project\\leerjaar 1\\p3\\code\\ASCARS\\data\\reverberation_data\\graph_images\\1_2_1200_hz.jpg"
+      }
+    }
   }
-
 ]
