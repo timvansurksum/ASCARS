@@ -1,8 +1,9 @@
+import matplotlib.pyplot as plt
 import pandas as pd
 import json
 
 class Data_Processor:
-
+    
     @classmethod
     def process_Calibration_Data(self, calibration_data, frequency, settings):
             get_Min = lambda sound_sample: float(sound_sample[0])
@@ -18,7 +19,7 @@ class Data_Processor:
                 'microphone_intensity': [intensity]
             })
             return calibration_data_point
-
+            
     @classmethod
     def data_Analysis(self, expirement_data, frequencies, x, y, settings):
         time_data = expirement_data['time_data']
