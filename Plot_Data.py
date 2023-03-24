@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import json
+from Data_Processor import Data_Processor
+import seaborn as sns
 
 class Plot_Data:
     
@@ -57,8 +59,8 @@ class Plot_Data:
                 label_y = vertical_line["label_y"]
 
                 axs[graph_id].vlines(x_value, y_lower_bound, y_upper_bound, colors='k', linestyles='dotted')
-                # axs[graph_id].text(label_x, label_y, vertical_line_title)
-                # axs[0].text(label_x, label_y, vertical_line_title)
+                axs[graph_id].text(label_x, label_y, vertical_line_title)
+                axs[0].text(label_x, label_y, vertical_line_title)
 
                 axs[0].vlines(x_value, y_lower_bound, y_upper_bound, colors='k', linestyles='dotted')
 
@@ -73,29 +75,22 @@ class Plot_Data:
                 label_y = horizontal_line["label_y"]
 
                 axs[graph_id].hlines(y_value, x_lower_bound, x_upper_bound, colors='k', linestyles='dotted')
-                # axs[graph_id].text(label_x, label_y, horizontal_line_title)
-                # axs[0].text(label_x, label_y, horizontal_line_title)
+                axs[graph_id].text(label_x, label_y, horizontal_line_title)
+                axs[0].text(label_x, label_y, horizontal_line_title)
 
                 axs[0].hlines(y_value, x_lower_bound, x_upper_bound, colors='k', linestyles='dotted')
-
-        
         plt.show()
-        
-
-
-        
-
-                
+           
     @classmethod
     def graph_Kalibration(self, kalibration_data: pd.DataFrame):
         frequencies = list(kalibration_data.drop_duplicates(subset=['frequency']).to_dict()['frequency'].values())
         frequency_count = len(frequencies)
-        fig, axs = plt.subplots(frequency_count, 1)
-        plt.title('calibration graphs')
+        fig, axs = plt.subplots(1, frequency_count)
+        fig.suptitle('calibration graphs')
         for frequency_id in range(frequency_count):
             frequency = frequencies[frequency_id]
             kalibration_data_with_current_frequency = kalibration_data[kalibration_data["frequency"] == frequency] 
-            kalibration_data_dictionairy = kalibration_data_with_current_frequency.to_dict()
+            kalibration_data_dictionairy = kalibration_data_with_current_frequency.sort_values(by="microphone_intensity").to_dict()
             
             microphone_intensity_values = list(kalibration_data_dictionairy['microphone_intensity'].values())
             DB_level_values = list(kalibration_data_dictionairy['DB_level'].values())
@@ -104,4 +99,15 @@ class Plot_Data:
             axs[frequency_id].set_title(f'kalibration graph of {str(frequency)}hz frequency')
             axs[frequency_id].set_xlabel('intensity_values')
             axs[frequency_id].set_ylabel('DB_values')
+        plt.show()
+    
+        
+    @classmethod
+    def show_Heatmap(self, file_location, frequencie):
+        imported_data = Data_Processor.process_General_Data_For_Heat_Map(file_location, frequencie)
+        transformed_data = imported_data.pivot("pos_x", "pos_y", "reverberation_time")
+
+        sns.heatmap(transformed_data, vmin=0, vmax=2)
+        plt.xlabel("Afstand y (m)")
+        plt.ylabel("Afstand x (m)")
         plt.show()

@@ -17,6 +17,7 @@ class Reverberation_Test:
     @classmethod
     def run_Calibration(self):
         done_running_frequencies = 0
+        existing_calibration_data = pd.read_csv('./data/calibration/calibration_data.csv')
         while not done_running_frequencies:
             frequency = input('what frequency do you want to calibrate: ')
             valid_frequency = False
@@ -27,7 +28,6 @@ class Reverberation_Test:
                 except:
                     frequency = input(f"invalid frequency input has to be an integer you entered: {frequency} \nplease re-enter a correct frequency:  ")
             audio_device_names = Sensor_Controller.set_Audio_Devices()
-            existing_calibration_data = pd.read_csv('./data/calibration/calibration_data.csv')
 
             
             done_running_this_frequency = 0

@@ -6,14 +6,16 @@ class Data_Processor:
     
     @classmethod
     def process_Calibration_Data(self, calibration_data, frequency):
-            recording = list(map(abs, calibration_data['recording']))
+            get_Min = lambda sound_sample: float(sound_sample[0])
+            recording = list(map(get_Min, calibration_data["recording"]))
+            recording = list(map(abs, recording))
             smooth_recording = self.smooth_Sound(recording, 441)
             intensity = self.get_Starting_intensity(smooth_recording, 0, 1)
             DB_level = calibration_data['DB_level']
             calibration_data_point = pd.DataFrame({
-                'DB_level': DB_level,
-                'frequency': frequency,
-                'microphone_intensity': intensity
+                'DB_level': [DB_level],
+                'frequency': [frequency],
+                'microphone_intensity': [intensity]
             })
             return calibration_data_point
             
@@ -23,8 +25,11 @@ class Data_Processor:
         recording = expirement_data['recording']
         time_stamps = expirement_data['timestamps']
         start_and_stop_time_stamps = self.get_Timestamps_For_Each_Frequency_Test(time_stamps, frequencies)
-        
-        if not (recording == [] or time_data == []) or not (len(recording) == len(time_data)):
+        if (
+            not (recording == [] 
+            or time_data == [])
+            and (len(recording) == len(time_data))
+            ):
 
             avaraging_window_in_number_of_samples = 441
             smoothed_recording = self.smooth_Sound(recording, avaraging_window_in_number_of_samples)
@@ -38,10 +43,13 @@ class Data_Processor:
             return False
     
     @classmethod
+    
     def write_Experiment_Data_to_File(self, frequencies, graph_lines, smoothed_recording, time_data, x, y):
-        general_data = open('./data/reverberation_data/general_data.json', 'r').read()
+        
+        existing_general_data = open('./data/reverberation_data/general_data.json', 'r').read()
+
         try:
-            general_data = json.loads(general_data)
+            general_data = json.loads(existing_general_data)
         except:
             general_data = {}
 
@@ -150,7 +158,7 @@ class Data_Processor:
     @classmethod
     def get_Starting_intensity(self, smoothed_recording, start_frequency_time, stop_frequency_time):
         sampling_rate = 44100
-        starting_intensity_value = int((stop_frequency_time)*sampling_rate)-1
+        starting_intensity_value = int((stop_frequency_time)*sampling_rate)-1*sampling_rate
         last_intensity_value = int(stop_frequency_time*sampling_rate)
         values_to_get_avarage_over = smoothed_recording[starting_intensity_value:last_intensity_value]
         starting_intensity = sum(values_to_get_avarage_over)/len(values_to_get_avarage_over)
@@ -210,3 +218,41 @@ class Data_Processor:
                 smoothed_recording.append(sum(list_of_values)/len(list_of_values))
             index += 1
         return smoothed_recording
+    
+    @classmethod
+    def process_General_Data_For_Heat_Map(self, file_location: str, frequency: int):
+        general_data = pd.read_json(file_location).to_dict()
+
+        x_positions_list = []
+        y_positions_list = []
+        reverberation_time_list = []
+        data = general_data["x_value"]
+        
+        for x_value in data:
+            
+            column = data[x_value]["y_value"]
+            for y_value in column:
+                reverberation_test = general_data["x_value"][x_value]["y_value"][y_value]
+                
+                if int(frequency) in reverberation_test["frequencies"]:
+                    frequency_key = str(frequency)
+                    
+                    time_of_reverberation = reverberation_test["graph_lines"][frequency_key]["vertical_lines"]["reverberation_time"]["x_value"]
+                    stop_frequency_time = reverberation_test["graph_lines"][frequency_key]["vertical_lines"]["stop_playing"]["x_value"]
+                    reverberation_time = round(((time_of_reverberation-stop_frequency_time)*6), 2)
+
+                    x_positions_list.append(float(x_value))
+                    y_positions_list.append(float(y_value))
+                    reverberation_time_list.append(float(reverberation_time))
+            
+        heat_map_dataframe = pd.DataFrame(
+            list(
+                zip(
+                    x_positions_list, 
+                    y_positions_list, 
+                    reverberation_time_list
+                    )
+                ), 
+            columns=["pos_x", "pos_y", "reverberation_time"]
+        )       
+        return heat_map_dataframe
