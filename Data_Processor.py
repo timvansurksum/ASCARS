@@ -1,44 +1,43 @@
 import matplotlib.pyplot as plt
-from Sensor_Controller import Sensor_Controller
 import pandas as pd
 import json
 
 class Data_Processor:
+
+    @classmethod
+    def graph_Kalibration(self, kalibration_data: pd.DataFrame):
+        frequencies = list(kalibration_data.drop_duplicates(subset=['frequency']).to_dict()['frequency'].values())
+        frequency_count = len(frequencies)
+        fig, axs = plt.subplots(frequency_count, 1)
+        plt.title('calibration graphs')
+        for frequency_id in range(frequency_count):
+            frequency = frequencies[frequency_id]
+            kalibration_data_with_current_frequency = kalibration_data[kalibration_data["frequency"] == frequency] 
+            kalibration_data_dictionairy = kalibration_data_with_current_frequency.to_dict()
+            
+            microphone_intensity_values = list(kalibration_data_dictionairy['microphone_intensity'].values())
+            DB_level_values = list(kalibration_data_dictionairy['DB_level'].values())
+            
+            axs[frequency_id].plot(microphone_intensity_values, DB_level_values)
+            axs[frequency_id].set_title(f'kalibration graph of {str(frequency)}hz frequency')
+            axs[frequency_id].set_xlabel('intensity_values')
+            axs[frequency_id].set_ylabel('DB_values')
+        plt.show()
+        print('done showing calibration graphs')
+
     
     @classmethod
-    def calibrate_Sensor(self, audio_device_name, playtime, frequency):
-        existing_calibration_data = pd.read_csv('./data/calibration/calibration_data.csv')
-
-        
-        done = 0
-        print(f'starting the calibration of the frequency {str(frequency)}')
-        while not done:
-            print(f'starting playing sound with frequency {str(frequency)}')
-            calibration_data = Sensor_Controller.play_Calibration_Sound(audio_device_name, frequency)
-            
+    def process_Calibration_Data(self, calibration_data, frequency):
             recording = list(map(abs, calibration_data['recording']))
             smooth_recording = self.smooth_Sound(recording, 441)
-            intensity = self.get_Starting_intensity(smooth_recording, 441)
-            DB_level = calibration_data
-            # DB_level,frequency,microphone_intensity
+            intensity = self.get_Starting_intensity(smooth_recording, 0, 1)
+            DB_level = calibration_data['DB_level']
             calibration_data_point = pd.DataFrame({
                 'DB_level': DB_level,
                 'frequency': frequency,
                 'microphone_intensity': intensity
             })
-            existing_calibration_data.append(calibration_data_point)
-
-            new_DB_test = input("do you want to test another DB level? 'yes' or 'no'?")
-            while new_DB_test in ['yes', 'no']:
-                if new_DB_test == 'yes':
-                    done = 0
-                elif new_DB_test == 'no':
-                    done = 1
-                else:
-                    new_DB_test = input("invalid input please enter a valid input either 'yes' or 'no'?")
-        
-        existing_calibration_data.to_csv('./data/calibration/calibration_data.csv', sep=',', encoding='utf-8', index=False)
-
+            return calibration_data_point
     @classmethod
     def data_Analysis(self, expirement_data, frequencies, x, y):
         time_data = expirement_data['time_data']
