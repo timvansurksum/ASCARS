@@ -1,10 +1,10 @@
 from Sensor_Controller import Sensor_Controller
 from Data_Processor import Data_Processor
+from Plot_Data import Plot_Data
 import multiprocessing
 from multiprocessing import Process
 import numpy as np
 import pandas as pd
-
 
 class Reverberation_Test:
     
@@ -12,8 +12,7 @@ class Reverberation_Test:
     def show_Calibration(self):
         kalibration_data = pd.read_csv('./data/calibration/calibration_data.csv')
         print('showing calibration graphs...')
-        Data_Processor.graph_Kalibration(kalibration_data)
-
+        Plot_Data.graph_Kalibration(kalibration_data)
 
     @classmethod
     def run_Calibration(self):

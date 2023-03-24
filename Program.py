@@ -1,5 +1,6 @@
 from Graphical_User_Interface import Graphical_User_Interface
 from Reverberation_Test import Reverberation_Test
+from Plot_Data import Plot_Data
 
 class Program:
     
@@ -27,15 +28,18 @@ class Program:
                     run_or_view_experiment = input("invalid input enter either 'run' or 'view': ")
                 
                 if run_or_view_experiment ==  'view':
-                    print('feature not implementen yet')
+                        print('what position do you want to run an experiment on?')
+                        x_position = str(input('enter your x position: '))
+                        y_position = str(input('enter your y position: '))
+                        Plot_Data.graph_Experiment_Data(x_position, y_position)
                 if run_or_view_experiment ==  'run':
                     
                     running_experiments = True
                     while running_experiments:
                     
                         print('what position do you want to run an experiment on?')
-                        x_position = int(input('enter your x position: '))
-                        y_position = int(input('enter your y position: '))
+                        x_position = str(input('enter your x position: '))
+                        y_position = str(input('enter your y position: '))
                         Reverberation_Test.run_Experiment(x_position, y_position)
                         
                         keep_running = input("do you want to run another test? 'yes' or 'no': ")
