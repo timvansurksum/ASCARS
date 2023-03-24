@@ -16,47 +16,29 @@ class Reverberation_Test:
 
     @classmethod
     def run_Calibration(self):
-        done_running_frequencies = 0
         existing_calibration_data = pd.read_csv('./data/calibration/calibration_data.csv')
-        while not done_running_frequencies:
-            frequency = input('what frequency do you want to calibrate: ')
-            valid_frequency = False
-            while not valid_frequency:
-                try:
-                    frequency = int(frequency)
-                    valid_frequency = True
-                except:
-                    frequency = input(f"invalid frequency input has to be an integer you entered: {frequency} \nplease re-enter a correct frequency:  ")
+        done_running_this_frequency = False
+        while not done_running_this_frequency:
             audio_device_names = Sensor_Controller.set_Audio_Devices()
 
+            print(f'starting the calibration')
+            frequency = 1000
+            print(f'starting playing sound with frequency {str(frequency)}')
+            calibration_data = Sensor_Controller.play_and_record_Calibration_Sound(audio_device_names, frequency)
+            print('processing data...')
+            calibration_data_point = Data_Processor.process_Calibration_Data(calibration_data, frequency)
             
-            done_running_this_frequency = 0
-            print(f'starting the calibration of the frequency {str(frequency)}')
-            while not done_running_this_frequency:
-                print(f'starting playing sound with frequency {str(frequency)}')
-                calibration_data = Sensor_Controller.play_and_record_Calibration_Sound(audio_device_names, frequency)
-                print('processing data...')
-                calibration_data_point = Data_Processor.process_Calibration_Data(calibration_data, frequency)
-                
-                existing_calibration_data = pd.concat([existing_calibration_data, calibration_data_point])
+            existing_calibration_data = pd.concat([existing_calibration_data, calibration_data_point])
 
-                new_DB_test = input("do you want to test another DB level? 'yes' or 'no'? ")
-                while not new_DB_test in ['yes', 'no']:
-                        new_DB_test = input("invalid input please enter a valid input either 'yes' or 'no'? ")
+            new_DB_test = input("do you want to test another DB level? 'yes' or 'no'? ")
+            while not new_DB_test in ['yes', 'no']:
+                    new_DB_test = input("invalid input please enter a valid input either 'yes' or 'no'? ")
 
-                if new_DB_test == 'yes':
-                    done_running_this_frequency = False
-                elif new_DB_test == 'no':
-                    done_running_this_frequency = True
-            
-            new_frequency_test = input("do you want to test another frequency? 'yes' or 'no'? ")
-            while not new_frequency_test in ['yes', 'no']:
-                    new_frequency_test = input("invalid input please enter a valid input either 'yes' or 'no'? ")
+            if new_DB_test == 'yes':
+                done_running_this_frequency = False
+            elif new_DB_test == 'no':
+                done_running_this_frequency = True
 
-            if new_frequency_test == 'yes':
-                done_running_frequencies = False
-            elif new_frequency_test == 'no':
-                done_running_frequencies = True
         existing_calibration_data.to_csv('./data/calibration/calibration_data.csv', sep=',', encoding='utf-8', index=False)
 
     @classmethod
