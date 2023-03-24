@@ -10,7 +10,7 @@ class Data_Processor:
             recording = list(map(get_Min, calibration_data["recording"]))
             recording = list(map(abs, recording))
             smooth_recording = self.smooth_Sound(recording, 441)
-            intensity = self.get_Starting_intensity(smooth_recording, 0, 1)
+            intensity = self.get_Starting_intensity(smooth_recording, 1)
             DB_level = calibration_data['DB_level']
             calibration_data_point = pd.DataFrame({
                 'DB_level': [DB_level],
@@ -24,7 +24,7 @@ class Data_Processor:
         time_data = expirement_data['time_data']
         recording = expirement_data['recording']
         time_stamps = expirement_data['timestamps']
-        start_and_stop_time_stamps = self.get_Timestamps_For_Each_Frequency_Test(time_stamps, frequencies)
+        start_and_stop_time_stamps = self.get_Timestamps_For_Each_Frequency(time_stamps, frequencies)
         if (
             not (recording == [] 
             or time_data == [])
@@ -33,7 +33,7 @@ class Data_Processor:
 
             avaraging_window_in_number_of_samples = 441
             smoothed_recording = self.smooth_Sound(recording, avaraging_window_in_number_of_samples)
-            calibrated_recording = self.apply_Calibration_to_recording_data(smoothed_recording)
+            calibrated_recording = self.apply_Calibration_to_recording_data(smoothed_recording, start_and_stop_time_stamps)
             graph_lines = self.get_lines(calibrated_recording, time_stamps, start_and_stop_time_stamps)
             
             self.write_Experiment_Data_to_File(frequencies, graph_lines, calibrated_recording, time_data, x, y)
@@ -96,7 +96,7 @@ class Data_Processor:
                     start_playing_frequency_time = timestamp['time']
                 if timestamp['time_name'] == f'stop_frequency_{frequency}':
                     stop_playing_frequency_time = timestamp['time']
-            starting_intensity  = self.get_Starting_intensity(smoothed_recording, start_playing_frequency_time, stop_playing_frequency_time)
+            starting_intensity  = self.get_Starting_intensity(smoothed_recording, stop_playing_frequency_time)
             reverberation_time = self.get_Reverberation_Time(smoothed_recording, starting_intensity, stop_playing_frequency_time)
             
             lines_by_frequency['vertical_lines']['reverberation_time'] = {
@@ -157,7 +157,7 @@ class Data_Processor:
         return reveberation_time
     
     @classmethod
-    def get_Starting_intensity(self, smoothed_recording, start_frequency_time, stop_frequency_time):
+    def get_Starting_intensity(self, smoothed_recording, stop_frequency_time):
         sampling_rate = 44100
         starting_intensity_value = int((stop_frequency_time)*sampling_rate)-1*sampling_rate
         last_intensity_value = int(stop_frequency_time*sampling_rate)
@@ -166,7 +166,7 @@ class Data_Processor:
         return starting_intensity
 
     @classmethod
-    def get_Timestamps_For_Each_Frequency_Test(self, timestamps, frequencies):
+    def get_Timestamps_For_Each_Frequency(self, timestamps, frequencies):
         
         start_and_stop_time_stamps = {}
         for frequency in frequencies:
@@ -258,38 +258,40 @@ class Data_Processor:
         return heat_map_dataframe
     
     @classmethod
-    def apply_Calibration_to_recording_data(self, smoothed_recording):
+    def apply_Calibration_to_recording_data(self, smoothed_recording: list, start_and_stop_time_stamps: dict):
         calibration_data = pd.read_csv("data\calibration\calibration_data.csv").to_dict()
         calibrated_data = []
-        for datapoint in smoothed_recording:
-            index = -1
-            for intensity_point in calibration_data['microphone_intensity'].values():
-                index += 1
-                if intensity_point > datapoint:
-                    upper_bound = intensity_point           
-                    if index == 0:
-                        lower_bound = 0
-                    elif index == len(calibration_data['microphone_intensity']) - 1:
-                        lower_bound = calibration_data['microphone_intensity'][index-1]
-                    else:
-                        lower_bound = calibration_data['microphone_intensity'][index-1]
+        start_time = 0
+        for start_and_stop_time_stamp in start_and_stop_time_stamps.keys():
+            stop_time = start_and_stop_time_stamps[start_and_stop_time_stamp]["stop_frequency_time"]
+            for datapoint in smoothed_recording[int(start_time*44100):int(stop_time*44100)]:
+                index = -1
+                for intensity_point in calibration_data['microphone_intensity'].values():
+                    index += 1
+                    if intensity_point > datapoint:
+                        upper_bound = intensity_point           
+                        if index == 0:
+                            lower_bound = 0
+                        elif index == len(calibration_data['microphone_intensity']) - 1:
+                            lower_bound = calibration_data['microphone_intensity'][index-1]
+                        else:
+                            lower_bound = calibration_data['microphone_intensity'][index-1]
+                            
                         
-                    
-                    span =  upper_bound - lower_bound
-                    point = datapoint - lower_bound
-                    portion = point/span
-                    break
-            if index == 0:
-                upper_DB_bound = calibration_data['DB_level'][index]
-                DB_value = upper_DB_bound*portion
-            else:
-                lower_DB_bound = calibration_data['DB_level'][index-1]
-                upper_DB_bound = calibration_data['DB_level'][index]
-                DB_value = lower_DB_bound + (upper_DB_bound-lower_DB_bound)*portion
-            if DB_value > 100:
-                y = 3
-            calibrated_data.append(DB_value)
+                        span =  upper_bound - lower_bound
+                        point = datapoint - lower_bound
+                        portion = point/span
+                        break
+                if index == 0:
+                    upper_DB_bound = calibration_data['DB_level'][index]
+                    DB_value = upper_DB_bound*portion
+                else:
+                    lower_DB_bound = calibration_data['DB_level'][index-1]
+                    upper_DB_bound = calibration_data['DB_level'][index]
+                    DB_value = lower_DB_bound + (upper_DB_bound-lower_DB_bound)*portion
+                if DB_value > 100:
+                    y = 3
+                calibrated_data.append(DB_value)
+            start_time = start_and_stop_time_stamps[start_and_stop_time_stamp]["stop_frequency_time"]
 
         return calibrated_data
-
-

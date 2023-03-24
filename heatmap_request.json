@@ -1,0 +1,33 @@
+[
+  {
+    "x_positie": 1,
+    "y_positie": 1,
+    "reverberation_time": 0.1
+  },
+  {
+    "x_positie": 2,
+    "y_positie": 1,
+    "reverberation_time": 0.1
+  },
+  {
+    "x_positie": 3,
+    "y_positie": 1,
+    "reverberation_time": 0.1
+  },
+  {
+    "x_positie": 2,
+    "y_positie": 1,
+    "reverberation_time": 0.1
+  },
+  {
+    "x_positie": 1,
+    "y_positie": 2,
+    "reverberation_time": 0.1
+  },
+  {
+    "x_positie": 1,
+    "y_positie": 3,
+    "reverberation_time": 0.1
+  }
+
+]

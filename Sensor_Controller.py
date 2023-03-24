@@ -34,7 +34,7 @@ class Sensor_Controller:
                 valid_input = True
             except:
                 DB_level = input('incorrect value has to be a number please re-enter the db level here: ')
-        
+        time.sleep(0.2)
         sd.default.device = audio_device_name['record_device_name']
         recording = sd.rec(1000,samplerate=fs, channels=1, dtype='float64')
         print('recording tone...')

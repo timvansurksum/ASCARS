@@ -20,9 +20,23 @@ class Reverberation_Test:
         done_running_this_frequency = False
         while not done_running_this_frequency:
             audio_device_names = Sensor_Controller.set_Audio_Devices()
+            frequency = input("what frequency do you want to calibrate?: ")
+            valid_frequency = False
+            try:
+                frequency = int(frequency)
+            except:
+                while not valid_frequency:
+                    frequency = input("invalid input please enter a valid frequency?: ")
+                    try:
+                        frequency = int(frequency)
+                        valid_frequency = True
+                    except:
+                        valid_frequency = False
+            
+                
 
             print(f'starting the calibration')
-            frequency = 1000
+            frequency = frequency
             print(f'starting playing sound with frequency {str(frequency)}')
             calibration_data = Sensor_Controller.play_and_record_Calibration_Sound(audio_device_names, frequency)
             print('processing data...')
