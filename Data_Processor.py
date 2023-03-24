@@ -285,6 +285,7 @@ class Data_Processor:
         avaraging_window_in_number_of_samples: int, window over which to apply the 'convolution'
         """
         # gets the absolute value of the signal
+        avaraging_window_in_number_of_samples = int(avaraging_window_in_number_of_samples)
         recording = list(map(abs, recording))
 
 
