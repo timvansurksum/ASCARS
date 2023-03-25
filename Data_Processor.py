@@ -68,7 +68,7 @@ class Data_Processor:
             calibrated_recording = self.apply_Calibration_to_recording_data(smoothed_recording, start_and_stop_time_stamps, settings["sampling_rate"])
             graph_lines = self.get_lines(calibrated_recording, time_stamps, start_and_stop_time_stamps, settings["sampling_rate"])
             
-            self.graph_Experiment_Data_To_Image(calibrated_recording, graph_lines, x, y)
+            self.graph_Experiment_Data_To_Image(calibrated_recording, graph_lines, x, y, settings["sampling_rate"])
 
             # writes the experiment data to file
             self.write_Experiment_Data_to_File(frequencies, graph_lines, calibrated_recording, time_data, x, y, settings)
@@ -78,28 +78,33 @@ class Data_Processor:
             print('none existent or corrupt data to process please check for any problems in your input data!')
             return False
     @classmethod
-    def graph_Experiment_Data_To_Image(self, calibrated_recording, graph_lines, x, y):
-        for frequency_lines in graph_lines:
+    def graph_Experiment_Data_To_Image(self, calibrated_recording, graph_lines, x, y, sample_rate):
+        for frequency_line_key in graph_lines:
             graphics_builder = Graphics_Builder()
             graphics_builder.setup()
             try:
-                graphics_builder.construct()
+                graphics_builder.graph_frequency(graph_lines[frequency_line_key], calibrated_recording, sample_rate)
             except:
-                graphics_builder.remove(*self.mobjects)
-                graphics_builder.renderer.clear_screen()
-                graphics_builder.renderer.num_plays = 0
-                return True
+                try:
+                    graphics_builder.default()
+                except:
+                    graphics_builder.remove(*self.mobjects)
+                    graphics_builder.renderer.clear_screen()
+                    graphics_builder.renderer.num_plays = 0
+                    return False
             graphics_builder.tear_down()
+
             # We have to reset these settings in case of multiple renders.
             graphics_builder.renderer.static_image = None
             graphics_builder.renderer.update_frame(graphics_builder)
             image = graphics_builder.renderer.camera.get_image()
             image_file_path =  add_extension_if_not_present(
-                Path(f"data\\reverberation_data\\graph_images\\{x}_{y}_{frequency_lines}"), ".png"
+                Path(f"data\\reverberation_data\\graph_images\\{x}_{y}_{frequency_line_key}"), ".png"
             )
             graphics_builder.renderer.file_writer.image_file_path = image_file_path
             # graphics_builder.renderer.file_writer.save_final_image(image)
             image.save(image_file_path)
+        return True
 
     @classmethod
     def write_Experiment_Data_to_File(self, frequencies: list, graph_lines: dict, smoothed_recording: list, time_data: list, x: float, y: float, settings: dict):

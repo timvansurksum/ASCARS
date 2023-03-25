@@ -14,260 +14,531 @@
 					],
 					"graph_lines": {
 						"400": {
-							"start_time": 3.1127960681915283,
-							"stop_time": 9.30466079711914,
+							"start_time": 3.7803866863250732,
+							"stop_time": 9.951215267181396,
 							"vertical_lines": {
 								"reverberation_time": {
-									"x_value": 9.30466079711914,
-									"y_upper_bound": 0.0,
-									"y_lower_bound": -10.0,
-									"label_x": 9.30466079711914,
-									"label_y": -5.0
+									"x_value": 9.951215267181396,
+									"y_upper_bound": 2.964888749970351,
+									"y_lower_bound": -7.035111250029649,
+									"label_x": 9.951215267181396,
+									"label_y": -2.035111250029649
 								},
 								"start_playing": {
-									"x_value": 5.112796068191528,
-									"y_upper_bound": 0.0,
+									"x_value": 5.780386686325073,
+									"y_upper_bound": 3.854355374961456,
 									"y_lower_bound": 0,
-									"label_x": 5.112796068191528,
-									"label_y": 0.0
+									"label_x": 5.780386686325073,
+									"label_y": 3.557866499964421
 								},
 								"stop_playing": {
-									"x_value": 7.304660797119141,
-									"y_upper_bound": 0.0,
+									"x_value": 7.9512152671813965,
+									"y_upper_bound": 3.854355374961456,
 									"y_lower_bound": 0,
-									"label_x": 7.304660797119141,
-									"label_y": 0.0
+									"label_x": 7.9512152671813965,
+									"label_y": 3.557866499964421
 								}
 							},
 							"horizontal_lines": {
 								"starting_intensity": {
-									"y_value": 0.0,
-									"x_upper_bound": 9.30466079711914,
-									"x_lower_bound": 3.1127960681915283,
-									"label_x": 7.304660797119141,
-									"label_y": 0.0
+									"y_value": 2.964888749970351,
+									"x_upper_bound": 9.951215267181396,
+									"x_lower_bound": 3.7803866863250732,
+									"label_x": 7.9512152671813965,
+									"label_y": 3.557866499964421
 								},
 								"reverberation_intensity": {
-									"y_value": -10.0,
-									"x_upper_bound": 9.30466079711914,
-									"x_lower_bound": 3.1127960681915283,
-									"label_x": 7.304660797119141,
-									"label_y": -12.0
+									"y_value": -7.035111250029649,
+									"x_upper_bound": 9.951215267181396,
+									"x_lower_bound": 3.7803866863250732,
+									"label_x": 7.9512152671813965,
+									"label_y": -8.44213350003558
 								}
 							}
 						},
 						"600": {
-							"start_time": 8.308547973632812,
-							"stop_time": 14.496557235717773,
+							"start_time": 8.953118562698364,
+							"stop_time": 15.1413893699646,
 							"vertical_lines": {
 								"reverberation_time": {
-									"x_value": 14.496557235717773,
-									"y_upper_bound": 0.0,
-									"y_lower_bound": -10.0,
-									"label_x": 14.496557235717773,
-									"label_y": -5.0
+									"x_value": 13.184790730508817,
+									"y_upper_bound": 39.767410588935576,
+									"y_lower_bound": 29.767410588935576,
+									"label_x": 13.184790730508817,
+									"label_y": 34.767410588935576
 								},
 								"start_playing": {
-									"x_value": 10.308547973632812,
-									"y_upper_bound": 0.0,
+									"x_value": 10.953118562698364,
+									"y_upper_bound": 51.69763376561625,
 									"y_lower_bound": 0,
-									"label_x": 10.308547973632812,
-									"label_y": 0.0
+									"label_x": 10.953118562698364,
+									"label_y": 47.72089270672269
 								},
 								"stop_playing": {
-									"x_value": 12.496557235717773,
-									"y_upper_bound": 0.0,
+									"x_value": 13.1413893699646,
+									"y_upper_bound": 51.69763376561625,
 									"y_lower_bound": 0,
-									"label_x": 12.496557235717773,
-									"label_y": 0.0
+									"label_x": 13.1413893699646,
+									"label_y": 47.72089270672269
 								}
 							},
 							"horizontal_lines": {
 								"starting_intensity": {
-									"y_value": 0.0,
-									"x_upper_bound": 14.496557235717773,
-									"x_lower_bound": 8.308547973632812,
-									"label_x": 12.496557235717773,
-									"label_y": 0.0
+									"y_value": 39.767410588935576,
+									"x_upper_bound": 15.1413893699646,
+									"x_lower_bound": 8.953118562698364,
+									"label_x": 13.1413893699646,
+									"label_y": 47.72089270672269
 								},
 								"reverberation_intensity": {
-									"y_value": -10.0,
-									"x_upper_bound": 14.496557235717773,
-									"x_lower_bound": 8.308547973632812,
-									"label_x": 12.496557235717773,
-									"label_y": -12.0
+									"y_value": 29.767410588935576,
+									"x_upper_bound": 15.1413893699646,
+									"x_lower_bound": 8.953118562698364,
+									"label_x": 13.1413893699646,
+									"label_y": 35.72089270672269
 								}
 							}
 						},
 						"800": {
-							"start_time": 13.500783920288086,
-							"stop_time": 19.68905258178711,
+							"start_time": 14.141802549362183,
+							"stop_time": 20.33010959625244,
 							"vertical_lines": {
 								"reverberation_time": {
-									"x_value": 19.68905258178711,
-									"y_upper_bound": 0.0,
-									"y_lower_bound": -10.0,
-									"label_x": 19.68905258178711,
-									"label_y": -5.0
+									"x_value": 18.372173088315932,
+									"y_upper_bound": 42.342907537004486,
+									"y_lower_bound": 32.342907537004486,
+									"label_x": 18.372173088315932,
+									"label_y": 37.342907537004486
 								},
 								"start_playing": {
-									"x_value": 15.500783920288086,
-									"y_upper_bound": 0.0,
+									"x_value": 16.141802549362183,
+									"y_upper_bound": 55.04577979810583,
 									"y_lower_bound": 0,
-									"label_x": 15.500783920288086,
-									"label_y": 0.0
+									"label_x": 16.141802549362183,
+									"label_y": 50.811489044405384
 								},
 								"stop_playing": {
-									"x_value": 17.68905258178711,
-									"y_upper_bound": 0.0,
+									"x_value": 18.33010959625244,
+									"y_upper_bound": 55.04577979810583,
 									"y_lower_bound": 0,
-									"label_x": 17.68905258178711,
-									"label_y": 0.0
+									"label_x": 18.33010959625244,
+									"label_y": 50.811489044405384
 								}
 							},
 							"horizontal_lines": {
 								"starting_intensity": {
-									"y_value": 0.0,
-									"x_upper_bound": 19.68905258178711,
-									"x_lower_bound": 13.500783920288086,
-									"label_x": 17.68905258178711,
-									"label_y": 0.0
+									"y_value": 42.342907537004486,
+									"x_upper_bound": 20.33010959625244,
+									"x_lower_bound": 14.141802549362183,
+									"label_x": 18.33010959625244,
+									"label_y": 50.811489044405384
 								},
 								"reverberation_intensity": {
-									"y_value": -10.0,
-									"x_upper_bound": 19.68905258178711,
-									"x_lower_bound": 13.500783920288086,
-									"label_x": 17.68905258178711,
-									"label_y": -12.0
+									"y_value": 32.342907537004486,
+									"x_upper_bound": 20.33010959625244,
+									"x_lower_bound": 14.141802549362183,
+									"label_x": 18.33010959625244,
+									"label_y": 38.811489044405384
 								}
 							}
 						},
 						"1000": {
-							"start_time": 18.703760147094727,
-							"stop_time": 24.89300799369812,
+							"start_time": 19.33079767227173,
+							"stop_time": 25.5185604095459,
 							"vertical_lines": {
 								"reverberation_time": {
-									"x_value": 24.89300799369812,
-									"y_upper_bound": 0.0,
-									"y_lower_bound": -10.0,
-									"label_x": 24.89300799369812,
-									"label_y": -5.0
+									"x_value": 23.561168119296465,
+									"y_upper_bound": 38.71916177564064,
+									"y_lower_bound": 28.719161775640643,
+									"label_x": 23.561168119296465,
+									"label_y": 33.71916177564064
 								},
 								"start_playing": {
-									"x_value": 20.703760147094727,
-									"y_upper_bound": 0.0,
+									"x_value": 21.33079767227173,
+									"y_upper_bound": 50.33491030833284,
 									"y_lower_bound": 0,
-									"label_x": 20.703760147094727,
-									"label_y": 0.0
+									"label_x": 21.33079767227173,
+									"label_y": 46.46299413076877
 								},
 								"stop_playing": {
-									"x_value": 22.89300799369812,
-									"y_upper_bound": 0.0,
+									"x_value": 23.5185604095459,
+									"y_upper_bound": 50.33491030833284,
 									"y_lower_bound": 0,
-									"label_x": 22.89300799369812,
-									"label_y": 0.0
+									"label_x": 23.5185604095459,
+									"label_y": 46.46299413076877
 								}
 							},
 							"horizontal_lines": {
 								"starting_intensity": {
-									"y_value": 0.0,
-									"x_upper_bound": 24.89300799369812,
-									"x_lower_bound": 18.703760147094727,
-									"label_x": 22.89300799369812,
-									"label_y": 0.0
+									"y_value": 38.71916177564064,
+									"x_upper_bound": 25.5185604095459,
+									"x_lower_bound": 19.33079767227173,
+									"label_x": 23.5185604095459,
+									"label_y": 46.46299413076877
 								},
 								"reverberation_intensity": {
-									"y_value": -10.0,
-									"x_upper_bound": 24.89300799369812,
-									"x_lower_bound": 18.703760147094727,
-									"label_x": 22.89300799369812,
-									"label_y": -12.0
+									"y_value": 28.719161775640643,
+									"x_upper_bound": 25.5185604095459,
+									"x_lower_bound": 19.33079767227173,
+									"label_x": 23.5185604095459,
+									"label_y": 34.46299413076877
 								}
 							}
 						},
 						"1200": {
-							"start_time": 23.904529094696045,
-							"stop_time": 30.092205047607422,
+							"start_time": 24.519835710525513,
+							"stop_time": 30.7083523273468,
 							"vertical_lines": {
 								"reverberation_time": {
-									"x_value": 30.092205047607422,
-									"y_upper_bound": 0.0,
-									"y_lower_bound": -10.0,
-									"label_x": 30.092205047607422,
-									"label_y": -5.0
+									"x_value": 28.752003120997596,
+									"y_upper_bound": 29.0250207261826,
+									"y_lower_bound": 19.0250207261826,
+									"label_x": 28.752003120997596,
+									"label_y": 24.0250207261826
 								},
 								"start_playing": {
-									"x_value": 25.904529094696045,
-									"y_upper_bound": 0.0,
+									"x_value": 26.519835710525513,
+									"y_upper_bound": 37.73252694403738,
 									"y_lower_bound": 0,
-									"label_x": 25.904529094696045,
-									"label_y": 0.0
+									"label_x": 26.519835710525513,
+									"label_y": 34.83002487141912
 								},
 								"stop_playing": {
-									"x_value": 28.092205047607422,
-									"y_upper_bound": 0.0,
+									"x_value": 28.7083523273468,
+									"y_upper_bound": 37.73252694403738,
 									"y_lower_bound": 0,
-									"label_x": 28.092205047607422,
-									"label_y": 0.0
+									"label_x": 28.7083523273468,
+									"label_y": 34.83002487141912
 								}
 							},
 							"horizontal_lines": {
 								"starting_intensity": {
-									"y_value": 0.0,
-									"x_upper_bound": 30.092205047607422,
-									"x_lower_bound": 23.904529094696045,
-									"label_x": 28.092205047607422,
-									"label_y": 0.0
+									"y_value": 29.0250207261826,
+									"x_upper_bound": 30.7083523273468,
+									"x_lower_bound": 24.519835710525513,
+									"label_x": 28.7083523273468,
+									"label_y": 34.83002487141912
 								},
 								"reverberation_intensity": {
-									"y_value": -10.0,
-									"x_upper_bound": 30.092205047607422,
-									"x_lower_bound": 23.904529094696045,
-									"label_x": 28.092205047607422,
-									"label_y": -12.0
+									"y_value": 19.0250207261826,
+									"x_upper_bound": 30.7083523273468,
+									"x_lower_bound": 24.519835710525513,
+									"label_x": 28.7083523273468,
+									"label_y": 22.83002487141912
 								}
 							}
 						},
 						"1400": {
-							"start_time": 29.09494709968567,
-							"stop_time": 35.2835578918457,
+							"start_time": 29.708991527557373,
+							"stop_time": 35.89752006530762,
 							"vertical_lines": {
 								"reverberation_time": {
-									"x_value": 35.00002047687972,
-									"y_upper_bound": 0.0,
-									"y_lower_bound": -10.0,
-									"label_x": 35.00002047687972,
-									"label_y": -5.0
+									"x_value": 33.94296224217837,
+									"y_upper_bound": 20.545582389487194,
+									"y_lower_bound": 10.545582389487194,
+									"label_x": 33.94296224217837,
+									"label_y": 15.545582389487194
 								},
 								"start_playing": {
-									"x_value": 31.09494709968567,
-									"y_upper_bound": 0.0,
+									"x_value": 31.708991527557373,
+									"y_upper_bound": 26.709257106333354,
 									"y_lower_bound": 0,
-									"label_x": 31.09494709968567,
-									"label_y": 0.0
+									"label_x": 31.708991527557373,
+									"label_y": 24.65469886738463
 								},
 								"stop_playing": {
-									"x_value": 33.2835578918457,
-									"y_upper_bound": 0.0,
+									"x_value": 33.89752006530762,
+									"y_upper_bound": 26.709257106333354,
 									"y_lower_bound": 0,
-									"label_x": 33.2835578918457,
-									"label_y": 0.0
+									"label_x": 33.89752006530762,
+									"label_y": 24.65469886738463
 								}
 							},
 							"horizontal_lines": {
 								"starting_intensity": {
-									"y_value": 0.0,
-									"x_upper_bound": 35.2835578918457,
-									"x_lower_bound": 29.09494709968567,
-									"label_x": 33.2835578918457,
-									"label_y": 0.0
+									"y_value": 20.545582389487194,
+									"x_upper_bound": 35.89752006530762,
+									"x_lower_bound": 29.708991527557373,
+									"label_x": 33.89752006530762,
+									"label_y": 24.65469886738463
 								},
 								"reverberation_intensity": {
-									"y_value": -10.0,
-									"x_upper_bound": 35.2835578918457,
-									"x_lower_bound": 29.09494709968567,
-									"label_x": 33.2835578918457,
-									"label_y": -12.0
+									"y_value": 10.545582389487194,
+									"x_upper_bound": 35.89752006530762,
+									"x_lower_bound": 29.708991527557373,
+									"label_x": 33.89752006530762,
+									"label_y": 12.654698867384633
+								}
+							}
+						}
+					}
+				},
+				"Microphone (MicIn)": {
+					"recording_file_name": "1_Microphone (MicIn).csv",
+					"frequencies": [
+						400,
+						600,
+						800,
+						1000,
+						1200,
+						1400
+					],
+					"graph_lines": {
+						"400": {
+							"start_time": 3.7817485332489014,
+							"stop_time": 9.953939437866211,
+							"vertical_lines": {
+								"reverberation_time": {
+									"x_value": 9.953939437866211,
+									"y_upper_bound": 5.5388007797936245,
+									"y_lower_bound": -4.4611992202063755,
+									"label_x": 9.953939437866211,
+									"label_y": 0.5388007797936245
+								},
+								"start_playing": {
+									"x_value": 5.781748533248901,
+									"y_upper_bound": 7.200441013731712,
+									"y_lower_bound": 0,
+									"label_x": 5.781748533248901,
+									"label_y": 6.646560935752349
+								},
+								"stop_playing": {
+									"x_value": 7.953939437866211,
+									"y_upper_bound": 7.200441013731712,
+									"y_lower_bound": 0,
+									"label_x": 7.953939437866211,
+									"label_y": 6.646560935752349
+								}
+							},
+							"horizontal_lines": {
+								"starting_intensity": {
+									"y_value": 5.5388007797936245,
+									"x_upper_bound": 9.953939437866211,
+									"x_lower_bound": 3.7817485332489014,
+									"label_x": 7.953939437866211,
+									"label_y": 6.646560935752349
+								},
+								"reverberation_intensity": {
+									"y_value": -4.4611992202063755,
+									"x_upper_bound": 9.953939437866211,
+									"x_lower_bound": 3.7817485332489014,
+									"label_x": 7.953939437866211,
+									"label_y": -5.353439064247651
+								}
+							}
+						},
+						"600": {
+							"start_time": 8.954486846923828,
+							"stop_time": 15.142012119293213,
+							"vertical_lines": {
+								"reverberation_time": {
+									"x_value": 13.187567674848768,
+									"y_upper_bound": 47.213568827318,
+									"y_lower_bound": 37.213568827318,
+									"label_x": 13.187567674848768,
+									"label_y": 42.213568827318
+								},
+								"start_playing": {
+									"x_value": 10.954486846923828,
+									"y_upper_bound": 61.3776394755134,
+									"y_lower_bound": 0,
+									"label_x": 10.954486846923828,
+									"label_y": 56.6562825927816
+								},
+								"stop_playing": {
+									"x_value": 13.142012119293213,
+									"y_upper_bound": 61.3776394755134,
+									"y_lower_bound": 0,
+									"label_x": 13.142012119293213,
+									"label_y": 56.6562825927816
+								}
+							},
+							"horizontal_lines": {
+								"starting_intensity": {
+									"y_value": 47.213568827318,
+									"x_upper_bound": 15.142012119293213,
+									"x_lower_bound": 8.954486846923828,
+									"label_x": 13.142012119293213,
+									"label_y": 56.6562825927816
+								},
+								"reverberation_intensity": {
+									"y_value": 37.213568827318,
+									"x_upper_bound": 15.142012119293213,
+									"x_lower_bound": 8.954486846923828,
+									"label_x": 13.142012119293213,
+									"label_y": 44.6562825927816
+								}
+							}
+						},
+						"800": {
+							"start_time": 14.143628358840942,
+							"stop_time": 20.33077907562256,
+							"vertical_lines": {
+								"reverberation_time": {
+									"x_value": 18.378965016665642,
+									"y_upper_bound": 63.98247559762915,
+									"y_lower_bound": 53.98247559762915,
+									"label_x": 18.378965016665642,
+									"label_y": 58.98247559762915
+								},
+								"start_playing": {
+									"x_value": 16.143628358840942,
+									"y_upper_bound": 83.1772182769179,
+									"y_lower_bound": 0,
+									"label_x": 16.143628358840942,
+									"label_y": 76.77897071715498
+								},
+								"stop_playing": {
+									"x_value": 18.33077907562256,
+									"y_upper_bound": 83.1772182769179,
+									"y_lower_bound": 0,
+									"label_x": 18.33077907562256,
+									"label_y": 76.77897071715498
+								}
+							},
+							"horizontal_lines": {
+								"starting_intensity": {
+									"y_value": 63.98247559762915,
+									"x_upper_bound": 20.33077907562256,
+									"x_lower_bound": 14.143628358840942,
+									"label_x": 18.33077907562256,
+									"label_y": 76.77897071715498
+								},
+								"reverberation_intensity": {
+									"y_value": 53.98247559762915,
+									"x_upper_bound": 20.33077907562256,
+									"x_lower_bound": 14.143628358840942,
+									"label_x": 18.33077907562256,
+									"label_y": 64.77897071715498
+								}
+							}
+						},
+						"1000": {
+							"start_time": 19.330966472625732,
+							"stop_time": 25.519060134887695,
+							"vertical_lines": {
+								"reverberation_time": {
+									"x_value": 23.564524987495407,
+									"y_upper_bound": 61.75192854433685,
+									"y_lower_bound": 51.75192854433685,
+									"label_x": 23.564524987495407,
+									"label_y": 56.75192854433685
+								},
+								"start_playing": {
+									"x_value": 21.330966472625732,
+									"y_upper_bound": 80.2775071076379,
+									"y_lower_bound": 0,
+									"label_x": 21.330966472625732,
+									"label_y": 74.10231425320421
+								},
+								"stop_playing": {
+									"x_value": 23.519060134887695,
+									"y_upper_bound": 80.2775071076379,
+									"y_lower_bound": 0,
+									"label_x": 23.519060134887695,
+									"label_y": 74.10231425320421
+								}
+							},
+							"horizontal_lines": {
+								"starting_intensity": {
+									"y_value": 61.75192854433685,
+									"x_upper_bound": 25.519060134887695,
+									"x_lower_bound": 19.330966472625732,
+									"label_x": 23.519060134887695,
+									"label_y": 74.10231425320421
+								},
+								"reverberation_intensity": {
+									"y_value": 51.75192854433685,
+									"x_upper_bound": 25.519060134887695,
+									"x_lower_bound": 19.330966472625732,
+									"label_x": 23.519060134887695,
+									"label_y": 62.10231425320421
+								}
+							}
+						},
+						"1200": {
+							"start_time": 24.52099370956421,
+							"stop_time": 30.708752632141113,
+							"vertical_lines": {
+								"reverberation_time": {
+									"x_value": 28.75419480901186,
+									"y_upper_bound": 48.28993923718661,
+									"y_lower_bound": 38.28993923718661,
+									"label_x": 28.75419480901186,
+									"label_y": 43.28993923718661
+								},
+								"start_playing": {
+									"x_value": 26.52099370956421,
+									"y_upper_bound": 62.77692100834259,
+									"y_lower_bound": 0,
+									"label_x": 26.52099370956421,
+									"label_y": 57.94792708462393
+								},
+								"stop_playing": {
+									"x_value": 28.708752632141113,
+									"y_upper_bound": 62.77692100834259,
+									"y_lower_bound": 0,
+									"label_x": 28.708752632141113,
+									"label_y": 57.94792708462393
+								}
+							},
+							"horizontal_lines": {
+								"starting_intensity": {
+									"y_value": 48.28993923718661,
+									"x_upper_bound": 30.708752632141113,
+									"x_lower_bound": 24.52099370956421,
+									"label_x": 28.708752632141113,
+									"label_y": 57.94792708462393
+								},
+								"reverberation_intensity": {
+									"y_value": 38.28993923718661,
+									"x_upper_bound": 30.708752632141113,
+									"x_lower_bound": 24.52099370956421,
+									"label_x": 28.708752632141113,
+									"label_y": 45.94792708462393
+								}
+							}
+						},
+						"1400": {
+							"start_time": 29.709262371063232,
+							"stop_time": 35.89786076545715,
+							"vertical_lines": {
+								"reverberation_time": {
+									"x_value": 33.94203310105806,
+									"y_upper_bound": 45.65839596582923,
+									"y_lower_bound": 35.65839596582923,
+									"label_x": 33.94203310105806,
+									"label_y": 40.65839596582923
+								},
+								"start_playing": {
+									"x_value": 31.709262371063232,
+									"y_upper_bound": 59.355914755578,
+									"y_lower_bound": 0,
+									"label_x": 31.709262371063232,
+									"label_y": 54.79007515899507
+								},
+								"stop_playing": {
+									"x_value": 33.89786076545715,
+									"y_upper_bound": 59.355914755578,
+									"y_lower_bound": 0,
+									"label_x": 33.89786076545715,
+									"label_y": 54.79007515899507
+								}
+							},
+							"horizontal_lines": {
+								"starting_intensity": {
+									"y_value": 45.65839596582923,
+									"x_upper_bound": 35.89786076545715,
+									"x_lower_bound": 29.709262371063232,
+									"label_x": 33.89786076545715,
+									"label_y": 54.79007515899507
+								},
+								"reverberation_intensity": {
+									"y_value": 35.65839596582923,
+									"x_upper_bound": 35.89786076545715,
+									"x_lower_bound": 29.709262371063232,
+									"label_x": 33.89786076545715,
+									"label_y": 42.79007515899507
 								}
 							}
 						}
