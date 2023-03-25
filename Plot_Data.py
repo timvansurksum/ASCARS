@@ -4,6 +4,7 @@ import json
 from Data_Processor import Data_Processor
 import seaborn as sns
 
+
 class Plot_Data:
     
     @classmethod
@@ -94,7 +95,7 @@ class Plot_Data:
 
                 axs[0].hlines(y_value, x_lower_bound, x_upper_bound, colors='k', linestyles='dotted')
         plt.show()
-           
+
     @classmethod
     def graph_Kalibration(self, kalibration_data: pd.DataFrame):
         """

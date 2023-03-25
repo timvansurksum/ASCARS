@@ -1,6 +1,9 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import json
+from Graphics_Builder import Graphics_Builder
+from manim.utils.file_ops import add_extension_if_not_present
+from pathlib import Path
 
 class Data_Processor:
     
@@ -65,6 +68,8 @@ class Data_Processor:
             calibrated_recording = self.apply_Calibration_to_recording_data(smoothed_recording, start_and_stop_time_stamps, settings["sampling_rate"])
             graph_lines = self.get_lines(calibrated_recording, time_stamps, start_and_stop_time_stamps, settings["sampling_rate"])
             
+            self.graph_Experiment_Data_To_Image(calibrated_recording, graph_lines, x, y)
+
             # writes the experiment data to file
             self.write_Experiment_Data_to_File(frequencies, graph_lines, calibrated_recording, time_data, x, y, settings)
             return True
@@ -72,7 +77,30 @@ class Data_Processor:
         else:
             print('none existent or corrupt data to process please check for any problems in your input data!')
             return False
-    
+    @classmethod
+    def graph_Experiment_Data_To_Image(self, calibrated_recording, graph_lines, x, y):
+        for frequency_lines in graph_lines:
+            graphics_builder = Graphics_Builder()
+            graphics_builder.setup()
+            try:
+                graphics_builder.construct()
+            except:
+                graphics_builder.remove(*self.mobjects)
+                graphics_builder.renderer.clear_screen()
+                graphics_builder.renderer.num_plays = 0
+                return True
+            graphics_builder.tear_down()
+            # We have to reset these settings in case of multiple renders.
+            graphics_builder.renderer.static_image = None
+            graphics_builder.renderer.update_frame(graphics_builder)
+            image = graphics_builder.renderer.camera.get_image()
+            image_file_path =  add_extension_if_not_present(
+                Path(f"data\\reverberation_data\\graph_images\\{x}_{y}_{frequency_lines}"), ".png"
+            )
+            graphics_builder.renderer.file_writer.image_file_path = image_file_path
+            # graphics_builder.renderer.file_writer.save_final_image(image)
+            image.save(image_file_path)
+
     @classmethod
     def write_Experiment_Data_to_File(self, frequencies: list, graph_lines: dict, smoothed_recording: list, time_data: list, x: float, y: float, settings: dict):
         """
@@ -86,12 +114,13 @@ class Data_Processor:
         y: float, y position of the setup
         settings: dict, appsettings for setup values
         """
-        # opens existing data file
-        existing_general_data = open(settings["data_storage_path"] + 'data/reverberation_data/general_data.json', 'r').read()
 
-        # gets data from data file if it exists
-        # if not it builds the fields themselfs to be ready to add data to
         try:
+            # opens existing data file
+            existing_general_data = open(settings["data_storage_path"] + 'data/reverberation_data/general_data.json', 'r').read()
+
+            # gets data from data file if it exists
+            # if not it builds the fields themselfs to be ready to add data to
             general_data = json.loads(existing_general_data)
         except:
             general_data = {}
