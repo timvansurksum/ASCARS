@@ -35,20 +35,20 @@ class Graphics_Builder(Scene):
     def graph_frequency(self, frequency_lines, calibrated_recording, sample_rate):
         self.camera.background_color = "#FFC0CB"
         max_y = frequency_lines['horizontal_lines']['starting_intensity']['y_value'] * 2
-        graph_start = frequency_lines['vertical_lines']['stop_playing']['x_value'] - 0.0002
+        graph_start = frequency_lines['vertical_lines']['stop_playing']['x_value'] - 0.1
         graph_end = frequency_lines['vertical_lines']['reverberation_time']['x_value'] + 0.05
 
         axes = Axes(
-            x_range=[graph_start, graph_end, 1],
+            x_range=[graph_start, graph_end, 0.01],
             y_range=[0, max_y , 5],
             axis_config={"color": BLACK},
             y_axis_config={
-                "numbers_to_include": np.arange(0, max_y, 5),
-                "numbers_with_elongated_ticks": np.arange(-10, max_y, 5),
+                "numbers_to_include": np.arange(0, max_y, 10),
+                "numbers_with_elongated_ticks": np.arange(-10, max_y, 10),
             },
             x_axis_config={
-                "numbers_to_include": np.arange(graph_start, graph_end, 0.1),
-                "numbers_with_elongated_ticks": np.arange(graph_start, graph_end, 0.1),
+                "numbers_to_include": np.arange(graph_start, graph_end, 0.02),
+                "numbers_with_elongated_ticks": np.arange(graph_start, graph_end, 0.02),
             },
             tips=False
         )
@@ -61,7 +61,8 @@ class Graphics_Builder(Scene):
         axes_labels = axes.get_axis_labels()
         data_graph = axes.plot(intensity, x_range=(graph_start, graph_end, 0.0002), color=GRAY, use_smoothing = False)
 
-        data_label = axes.get_graph_label(data_graph, label="sound intensity")
+        data_label = axes.get_graph_label(data_graph, label="intensity(DB)")
+        data_label.move_to(axes.coords_to_point(graph_start + (graph_end - graph_start)/2, max_y*0.9))
 
         plot = VGroup(axes, data_graph)
         labels = VGroup(data_label, axes_labels)
@@ -69,36 +70,39 @@ class Graphics_Builder(Scene):
         vertical_lines = frequency_lines["vertical_lines"]
         horizontal_lines = frequency_lines["horizontal_lines"]
 
-        for vertical_line_title in vertical_lines.keys():
-            vertical_line = vertical_lines[vertical_line_title]
-            
-            x_value = vertical_line["x_value"]
-            y_lower_bound = vertical_line["y_lower_bound"]
-            y_upper_bound = vertical_line["y_upper_bound"]
-
-            label_x = vertical_line["label_x"]
-            label_y = vertical_line["label_y"]
-            
-            vert_line = axes.get_vertical_line( axes.i2gp(x_value, max_y), color=YELLOW, line_func=Line )
-            line_label = axes.get_graph_label( data_graph, vertical_line_title, x_val=x_value, direction=UR, color=GRAY )
-            plot.add(vert_line)
-            labels.add(line_label)
+        try:
+            for vertical_line_title in vertical_lines.keys():
+                vertical_line = vertical_lines[vertical_line_title]
+                x_value = vertical_line["x_value"]
+                y_upper_bound = vertical_line["y_upper_bound"]
+                label_x = vertical_line["label_x"]
+                label_y = vertical_line["label_y"]
                 
+                if  (graph_end > x_value and x_value > graph_start):
+                    vert_line = axes.get_vertical_line( axes.coords_to_point(x_value, y_upper_bound), color=YELLOW, line_func=Line )
+                    line_label_vline = axes.get_graph_label( vert_line, vertical_line_title.replace("_", "\t"), x_val=label_x, direction=UR, color=GRAY)
+                    # line_label_vline.move_to(axes.coords_to_point(label_x, label_y))
 
-        # for horizontal_line_title in horizontal_lines.keys():
-        #     horizontal_line = horizontal_lines[horizontal_line_title]
-            
-        #     y_value = horizontal_line["y_value"]
-        #     x_lower_bound = horizontal_line["x_lower_bound"]
-        #     x_upper_bound = horizontal_line["x_upper_bound"]
+                    plot.add(vert_line)
+                    labels.add(line_label_vline)
+        except Exception as e:
+            print('vlines failed')
+        try:
+            for horizontal_line_title in horizontal_lines.keys():
+                horizontal_line = horizontal_lines[horizontal_line_title]
+                
+                y_value = horizontal_line["y_value"]
+                label_x = horizontal_line["label_x"]
+                label_y = horizontal_line["label_y"]
 
-        #     label_x = horizontal_line["label_x"]
-        #     label_y = horizontal_line["label_y"]
-
-        #     vert_line = axes.get_vertical_line( axes.i2gp(x_value, ), color=YELLOW, line_func=Line )
-        #     line_label = axes.get_graph_label( data_graph, vertical_line_title, x_val=x_value, direction=UR, color=GRAY )
-        #     plot.add(vert_line)
-        #     labels.add(line_label)
-
+                
+                horizontal_line = axes.plot( lambda t: y_value,  x_range=(graph_start, graph_end, 0.002), color=YELLOW)
+                line_label_hline = axes.get_graph_label( horizontal_line, horizontal_line_title.replace("_", "\t"), x_val=label_x, direction=UR, color=GRAY )
+                # line_label_hline.move_to(axes.coords_to_point(label_x, label_y))
+                
+                plot.add(horizontal_line)
+                labels.add(line_label_hline)
+        except Exception as e:
+            print('vlines failed')
 
         self.add(plot, labels)
