@@ -65,14 +65,33 @@ class Data_Processor:
             ):
             avaraging_window_in_number_of_samples = settings["sampling_rate"]*settings["smoothing_window"]
             # processes the data into usable metrics such as reverberation time and starting intensity in DB
-            smoothed_recording = self.smooth_Sound(recording, avaraging_window_in_number_of_samples)
-            calibrated_recording = self.apply_Calibration_to_recording_data(smoothed_recording, start_and_stop_time_stamps, settings["sampling_rate"])
-            graph_lines = self.get_lines(calibrated_recording, time_stamps, start_and_stop_time_stamps, settings["sampling_rate"])
+            print("\twriting raw data to file...")
+            raw_data = pd.DataFrame({
+                "recording": recording,
+                "time_data": time_data
+            })
+            raw_data.to_csv(settings["data_storage_path"] + f"data/reverberation_data/recordings/{x}_{y}_raw.csv", ',', index=False)
+            print("\twritten raw data to file")
             
+            print("\tsmoothing recording...")
+            smoothed_recording = self.smooth_Sound(recording, avaraging_window_in_number_of_samples)
+            print("\tsmoothed recording")
+            print("\tapplying calibration to recording...")
+            calibrated_recording = self.apply_Calibration_to_recording_data(smoothed_recording, start_and_stop_time_stamps, settings["sampling_rate"])
+            print("\tapplied calibration to recording")
+            print("\tgetting graph lines...")
+            graph_lines = self.get_lines(calibrated_recording, time_stamps, start_and_stop_time_stamps, settings["sampling_rate"])
+            print("\tgathered graph lines")
+            
+
+            print("\twriting graphs to image with manim...")
             self.graph_Experiment_Data_To_Image(calibrated_recording, graph_lines, x, y, settings["sampling_rate"])
+            print("\twriten graphs to image with manim")
 
             # writes the experiment data to file
+            print('\twriting data to file...')
             self.write_Experiment_Data_to_File(frequencies, graph_lines, calibrated_recording, time_data, x, y, settings)
+            print('\twritten data to file')
             return True
             
         else:
@@ -81,6 +100,7 @@ class Data_Processor:
     @classmethod
     def graph_Experiment_Data_To_Image(self, calibrated_recording, graph_lines, x, y, sample_rate):
         for frequency_line_key in graph_lines:
+            print(f"\t\tbuilding and saving {frequency_line_key} Hz run to image with manim...")
             graphics_builder = Graphics_Builder()
             graphics_builder.setup()
             try:
@@ -105,6 +125,7 @@ class Data_Processor:
             graphics_builder.renderer.file_writer.image_file_path = image_file_path
             # graphics_builder.renderer.file_writer.save_final_image(image)
             image.save(image_file_path)
+            print(f"\t\tbuild and saved {frequency_line_key} Hz run to image with manim")
         return True
 
     @classmethod

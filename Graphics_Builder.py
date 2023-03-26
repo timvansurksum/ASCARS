@@ -50,7 +50,7 @@ class Graphics_Builder(Scene):
                 "numbers_to_include": np.arange(graph_start, graph_end, 0.02),
                 "numbers_with_elongated_ticks": np.arange(graph_start, graph_end, 0.02),
             },
-            tips=False
+            tips=False,
         )
         def intensity(t):
             index = int(t * sample_rate)
@@ -58,10 +58,11 @@ class Graphics_Builder(Scene):
                 return calibrated_recording[index]
             else:
                 return 0
-        axes_labels = axes.get_axis_labels()
+        axes_labels = axes.get_axis_labels(x_label='time (s)', y_label='intensity (dB)')
+
         data_graph = axes.plot(intensity, x_range=(graph_start, graph_end, 0.0002), color=GRAY, use_smoothing = False)
 
-        data_label = axes.get_graph_label(data_graph, label="intensity(DB)")
+        data_label = axes.get_graph_label(data_graph, label="reverberation graph")
         data_label.move_to(axes.coords_to_point(graph_start + (graph_end - graph_start)/2, max_y*0.9))
 
         plot = VGroup(axes, data_graph)
@@ -70,39 +71,37 @@ class Graphics_Builder(Scene):
         vertical_lines = frequency_lines["vertical_lines"]
         horizontal_lines = frequency_lines["horizontal_lines"]
 
-        try:
-            for vertical_line_title in vertical_lines.keys():
+        for vertical_line_title in vertical_lines.keys():
+            try:
                 vertical_line = vertical_lines[vertical_line_title]
                 x_value = vertical_line["x_value"]
                 y_upper_bound = vertical_line["y_upper_bound"]
                 label_x = vertical_line["label_x"]
-                label_y = vertical_line["label_y"]
                 
                 if  (graph_end > x_value and x_value > graph_start):
                     vert_line = axes.get_vertical_line( axes.coords_to_point(x_value, y_upper_bound), color=YELLOW, line_func=Line )
-                    line_label_vline = axes.get_graph_label( vert_line, vertical_line_title.replace("_", "\t"), x_val=label_x, direction=UR, color=GRAY)
+                    line_label_vline = axes.get_graph_label( vert_line, MathTex(vertical_line_title.replace("_", "\_"), fill_color=GRAY).scale(0.7), x_val=label_x, direction=UR, color=GRAY)
                     # line_label_vline.move_to(axes.coords_to_point(label_x, label_y))
 
                     plot.add(vert_line)
                     labels.add(line_label_vline)
-        except Exception as e:
-            print('vlines failed')
-        try:
-            for horizontal_line_title in horizontal_lines.keys():
+            except Exception as e:
+                print('vlines failed')
+        for horizontal_line_title in horizontal_lines.keys():
+            try:
                 horizontal_line = horizontal_lines[horizontal_line_title]
                 
                 y_value = horizontal_line["y_value"]
                 label_x = horizontal_line["label_x"]
-                label_y = horizontal_line["label_y"]
 
                 
                 horizontal_line = axes.plot( lambda t: y_value,  x_range=(graph_start, graph_end, 0.002), color=YELLOW)
-                line_label_hline = axes.get_graph_label( horizontal_line, horizontal_line_title.replace("_", "\t"), x_val=label_x, direction=UR, color=GRAY )
+                line_label_hline = axes.get_graph_label( horizontal_line, MathTex(horizontal_line_title.replace("_", "\_"), fill_color=GRAY).scale(0.7), x_val=label_x, direction=UR, color=GRAY )
                 # line_label_hline.move_to(axes.coords_to_point(label_x, label_y))
                 
                 plot.add(horizontal_line)
                 labels.add(line_label_hline)
-        except Exception as e:
-            print('vlines failed')
+            except Exception as e:
+                print('vlines failed')
 
         self.add(plot, labels)
