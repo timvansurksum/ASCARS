@@ -152,7 +152,7 @@ class Plot_Data:
         imported_data = Data_Processor.process_General_Data_For_Heat_Map(file_location, frequency)
         transformed_data = imported_data.pivot("pos_x", "pos_y", "reverberation_time")
 
-        sns.heatmap(transformed_data, vmin=0, vmax=2)
+        sns.heatmap(transformed_data)
         plt.xlabel("Afstand y (m)")
         plt.ylabel("Afstand x (m)")
         plt.show()
