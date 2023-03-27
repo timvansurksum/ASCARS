@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import json
 
-from Graphics_Builder import Graphics_Builder
-from manim.utils.file_ops import add_extension_if_not_present
-from pathlib import Path
+# from Graphics_Builder import Graphics_Builder
+# from manim.utils.file_ops import add_extension_if_not_present
+# from pathlib import Path
 
 class Data_Processor:
     
@@ -84,9 +84,9 @@ class Data_Processor:
             print("\tgathered graph lines")
             
 
-            print("\twriting graphs to image with manim...")
-            self.graph_Experiment_Data_To_Image(calibrated_recording, graph_lines, x, y, settings["sampling_rate"])
-            print("\twriten graphs to image with manim")
+            # # print("\twriting graphs to image with manim...")
+            # # self.graph_Experiment_Data_To_Image(calibrated_recording, graph_lines, x, y, settings["sampling_rate"])
+            # # print("\twriten graphs to image with manim")
 
             # writes the experiment data to file
             print('\twriting data to file...')
